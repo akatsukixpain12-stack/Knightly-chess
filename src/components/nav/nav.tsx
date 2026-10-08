@@ -39,7 +39,7 @@ export default function Nav() {
     }
 
     const botLinks: BotLinks[] = [
-        { label: "Source Code", href: "https://github.com/wdeloo/Brilliant-Chess", icon: (props: {className: string}) => <GitHub class={props.className} /> },
+        { label: "Source Code", href: "https://github.com/akatsukixpain12-stack/Knightly-chess", icon: (props: {className: string}) => <GitHub class={props.className} /> },
         { label: "Attributions", href: "/attributions", icon: (props: {className: string}) => <Licenses class={props.className} /> },
     ]
 
@@ -76,6 +76,10 @@ export default function Nav() {
                     <Link draggable={false} onMouseEnter={() => setOpenedMenu(null)} href="/" className="flex flex-row gap-1 font-extrabold text-xl navTop:p-3 p-1.5 transition-colors hover:bg-backgroundBoxHover hover:text-foregroundHighlighted">
                         <Image draggable={false} height={30} width={30} alt="logo" src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/logo.svg`} className="navTop:mt-[-2px]" />
                         <div className="h-fit w-fit reduceNav:block hidden">Andromeda</div>
+                    </Link>
+                    <Link href="/play" className="text-lg outline-none font-bold navTop:px-3 navTop:py-2 p-1.5 hover:bg-backgroundBoxHover hover:text-foregroundHighlighted transition-colors flex flex-row gap-2">
+                        <span className="text-2xl leading-none">♞</span>
+                        <span className="h-fit w-fit reduceNav:block hidden">Play Online</span>
                     </Link>
                     {topLinks.map((link, i) => {
                         return (
