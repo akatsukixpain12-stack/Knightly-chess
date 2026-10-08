@@ -93,3 +93,19 @@ Deploy the generated static site as you already do.
 - Existing PGN/FEN/Chess.com/Lichess analysis remains available on the main page
 
 The referee is separate from the static Next.js frontend because a browser-only client must not be trusted to award its own rating.
+
+
+## Standalone HTML / GitHub Pages mode
+
+Knightly also includes a zero-build static chess client:
+
+- `index.html` — standalone entry point that can be served directly by a static host.
+- `public/knightly.html` — the same engine-play page for the Next.js static export.
+- No Firebase, Cloud Functions, or server is required for local engine play.
+- The engine picker exposes the repository's **Stockfish, Dragon, Explanation Engine, and Rodent** builds.
+- The static page uses `chess.js` in the browser and runs engines in Web Workers.
+- Git LFS WASM assets are resolved through GitHub's media endpoint instead of treating the small LFS pointer files as WASM binaries.
+
+For a direct GitHub Pages branch deployment, the root `index.html` is the entry point. For the Next.js export, `public/knightly.html` is copied into the static output.
+
+The Firebase multiplayer implementation remains available under `/play`, but the default navigation now opens the static engine client so a missing Firebase deployment does not block engine play.
