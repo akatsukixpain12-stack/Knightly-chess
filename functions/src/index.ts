@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase-admin/app"
-import { getDatabase, DatabaseReference as FirebaseDatabaseReference } from "firebase-admin/database"
+import { DatabaseReference as FirebaseDatabaseReference, getDatabase } from "firebase-admin/database"
 import { onValueCreated } from "firebase-functions/v2/database"
 import { logger } from "firebase-functions"
 import { Chess, Square } from "chess.js"
@@ -7,7 +7,13 @@ import { Chess, Square } from "chess.js"
 initializeApp()
 
 type Proposal = { from: string; to: string; promotion?: string; ply: number; uid: string }
-type State = { fen: string; ply: number; turn: "w" | "b"; result: "" | "1-0" | "0-1" | "1/2-1/2"; lastMove?: { from: string; to: string; san: string; uid: string; ply: number } }
+type State = {
+  fen: string
+  ply: number
+  turn: "w" | "b"
+  result: "" | "1-0" | "0-1" | "1/2-1/2"
+  lastMove?: { from: string; to: string; san: string; uid: string; ply: number }
+}
 
 function resultFor(chess: Chess): State["result"] {
   if (chess.isCheckmate()) return chess.turn() === "w" ? "0-1" : "1-0"
@@ -23,26 +29,30 @@ function eloDelta(a: number, b: number, score: number) {
 async function applyRatingForRoom(roomRef: FirebaseDatabaseReference, roomId: string, result: State["result"]) {
   const room = (await roomRef.once("value")).val()
   if (!room || room.ratingApplied || !room.black || !room.blackRating) return
+
   const whiteScore = result === "1-0" ? 1 : result === "1/2-1/2" ? 0.5 : 0
   const blackScore = 1 - whiteScore
   const whiteDelta = eloDelta(room.whiteRating, room.blackRating, whiteScore)
   const blackDelta = -eloDelta(room.blackRating, room.whiteRating, blackScore)
-  const updates: Record<string, unknown> = {}
-  updates[`users/${room.white}/rating`] = Math.max(100, room.whiteRating + whiteDelta)
-  updates[`users/${room.black}/rating`] = Math.max(100, room.blackRating + blackDelta)
-  updates[`users/${room.white}/games`] = { ".sv": { "increment": 1 } }
-  updates[`users/${room.black}/games`] = { ".sv": { "increment": 1 } }
+  const updates: Record<string, unknown> = {
+    [`users/${room.white}/rating`]: Math.max(100, room.whiteRating + whiteDelta),
+    [`users/${room.black}/rating`]: Math.max(100, room.blackRating + blackDelta),
+    [`users/${room.white}/games`]: { ".sv": { "increment": 1 } },
+    [`users/${room.black}/games`]: { ".sv": { "increment": 1 } },
+    [`rooms/${roomId}/ratingApplied`]: true,
+  }
+
   if (whiteScore === 1) {
     updates[`users/${room.white}/wins`] = { ".sv": { "increment": 1 } }
     updates[`users/${room.black}/losses`] = { ".sv": { "increment": 1 } }
-  } else if (whiteScore === 0) {
+  } else if (blackScore === 1) {
     updates[`users/${room.white}/losses`] = { ".sv": { "increment": 1 } }
     updates[`users/${room.black}/wins`] = { ".sv": { "increment": 1 } }
   } else {
     updates[`users/${room.white}/draws`] = { ".sv": { "increment": 1 } }
     updates[`users/${room.black}/draws`] = { ".sv": { "increment": 1 } }
   }
-  updates[`rooms/${roomId}/ratingApplied`] = true
+
   await getDatabase().ref().update(updates)
 }
 
@@ -54,11 +64,12 @@ export const referee = onValueCreated(
 
     const db = getDatabase()
     const roomRef = db.ref(`rooms/${event.params.roomId}`)
-    const stateRef = roomRef.child("state")
+    let accepted: State | null = null
+    let acceptedSan = ""
 
-    let accepted: { state: State; san: string } | null = null
     await roomRef.transaction((room) => {
       if (!room || room.status !== "playing" || room.state?.result) return room
+
       const state = room.state as State
       const expectedUid = state.turn === "w" ? room.white : room.black
       if (proposal.uid !== expectedUid || proposal.ply !== state.ply) return room
@@ -72,16 +83,20 @@ export const referee = onValueCreated(
         })
         const result = resultFor(chess)
         accepted = {
-          state: {
-            fen: chess.fen(),
-            ply: state.ply + 1,
-            turn: chess.turn(),
-            result,
-            lastMove: { from: proposal.from, to: proposal.to, san: move.san, uid: proposal.uid, ply: state.ply },
+          fen: chess.fen(),
+          ply: state.ply + 1,
+          turn: chess.turn(),
+          result,
+          lastMove: {
+            from: proposal.from,
+            to: proposal.to,
+            san: move.san,
+            uid: proposal.uid,
+            ply: state.ply,
           },
-          san: move.san,
         }
-        return { ...room, state: accepted.state, status: result ? "finished" : "playing" }
+        acceptedSan = move.san
+        return { ...room, state: accepted, status: result ? "finished" : "playing" }
       } catch {
         return room
       }
@@ -93,11 +108,15 @@ export const referee = onValueCreated(
     }
 
     await event.data.ref.child("accepted").set(true)
-    logger.info("Accepted move", { roomId: event.params.roomId, proposalId: event.params.proposalId, san: accepted.san })
+    logger.info("Accepted move", {
+      roomId: event.params.roomId,
+      proposalId: event.params.proposalId,
+      san: acceptedSan,
+    })
 
-    if (accepted.state.result) await applyRatingForRoom(roomRef, event.params.roomId, accepted.state.result)
-  }
-
+    if (accepted.result) {
+      await applyRatingForRoom(roomRef, event.params.roomId, accepted.result)
+    }
   },
 )
 
@@ -107,9 +126,11 @@ export const resignation = onValueCreated(
     const roomRef = getDatabase().ref(`rooms/${event.params.roomId}`)
     const room = (await roomRef.once("value")).val()
     if (!room || room.status !== "playing" || room.state?.result) return
+
     const uid = event.params.uid
     if (uid !== room.white && uid !== room.black) return
-    const result = uid === room.white ? "0-1" : "1-0"
+
+    const result: State["result"] = uid === room.white ? "0-1" : "1-0"
     await roomRef.update({
       status: "finished",
       state: { ...room.state, result },
