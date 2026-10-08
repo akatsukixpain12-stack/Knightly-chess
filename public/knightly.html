@@ -42,13 +42,13 @@ button,select,input{font:inherit}button{cursor:pointer;border:0}.wrap{max-width:
 <script type="module">
 import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/+esm";
 
-const REPO="akatsukixpain12-stack/Knightly-chess";
+const REPO="akatsukixpain12-stack/Knightly-chess";\nconst ENGINE_BASE=location.pathname.endsWith("knightly.html")?"./engine/":"./public/engine/";
 const MEDIA="https://media.githubusercontent.com/media/"+REPO+"/main/public/engine/";
 const engines=[
-{id:"stockfish",name:"Stockfish",desc:"Strong general engine",kind:"hash",js:"./public/engine/stockfish.js",wasm:MEDIA+"stockfish.wasm"},
-{id:"dragon",name:"Dragon",desc:"Komodo/Dragon engine",kind:"hashbook",js:"./public/engine/dragon.js",wasm:MEDIA+"dragon.wasm",book:MEDIA+"book.bin"},
-{id:"explanation",name:"Explanation Engine",desc:"Komodo explanation engine",kind:"hash",js:"./public/engine/explanation-engine.js",wasm:MEDIA+"explanation-engine.wasm"},
-{id:"rodent",name:"Rodent",desc:"UCI Rodent engine",kind:"rodent",js:"./public/engine/rodent/rodent.js",wasm:MEDIA+"rodent.wasm",data:MEDIA+"rodent.data"}
+{id:"stockfish",name:"Stockfish",desc:"Strong general engine",kind:"hash",js:ENGINE_BASE+"stockfish.js",wasm:MEDIA+"stockfish.wasm"},
+{id:"dragon",name:"Dragon",desc:"Komodo/Dragon engine",kind:"hashbook",js:ENGINE_BASE+"dragon.js",wasm:MEDIA+"dragon.wasm",book:MEDIA+"book.bin"},
+{id:"explanation",name:"Explanation Engine",desc:"Komodo explanation engine",kind:"hash",js:ENGINE_BASE+"explanation-engine.js",wasm:MEDIA+"explanation-engine.wasm"},
+{id:"rodent",name:"Rodent",desc:"UCI Rodent engine",kind:"rodent",js:ENGINE_BASE+"rodent/rodent.js",wasm:MEDIA+"rodent.wasm",data:MEDIA+"rodent.data"}
 ];
 const QUESTIONS=[
 ["How many points is a queen usually worth?",["3","5","9","12"],2],
