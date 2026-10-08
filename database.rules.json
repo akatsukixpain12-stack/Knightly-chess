@@ -1,0 +1,43 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name','rating','level','provisional','games','wins','losses','draws'])",
+        "rating": { ".validate": "newData.isNumber() && newData.val() >= 100 && newData.val() <= 4000" },
+        "games": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "wins": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "losses": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "draws": { ".validate": "newData.isNumber() && newData.val() >= 0" }
+      }
+    },
+    "rooms": {
+      ".indexOn": ["status"],
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null && ((!data.exists() && newData.child('white').val() === auth.uid) || (data.exists() && data.child('black').val() === null && newData.child('black').val() === auth.uid))",
+        "proposals": {
+          "$proposalId": {
+            ".write": "auth != null && !data.exists() && (root.child('rooms').child($roomId).child('white').val() === auth.uid || root.child('rooms').child($roomId).child('black').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['from','to','ply','uid']) && newData.child('uid').val() === auth.uid && newData.child('from').isString() && newData.child('to').isString() && newData.child('ply').isNumber()"
+          }
+        },
+        "messages": {
+          "$messageId": {
+            ".write": "auth != null && !data.exists() && (root.child('rooms').child($roomId).child('white').val() === auth.uid || root.child('rooms').child($roomId).child('black').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['uid','name','text','createdAt']) && newData.child('uid').val() === auth.uid && newData.child('text').isString() && newData.child('text').val().length <= 300"
+          }
+        },
+        "resignations": {
+          "$uid": {
+            ".write": "auth != null && $uid === auth.uid && (root.child('rooms').child($roomId).child('white').val() === auth.uid || root.child('rooms').child($roomId).child('black').val() === auth.uid)",
+            ".validate": "newData.hasChild('createdAt')"
+          }
+        }
+      }
+    }
+  }
+}
