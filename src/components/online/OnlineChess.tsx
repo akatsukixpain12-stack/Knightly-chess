@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Chess, Square } from "chess.js"
 import Link from "next/link"
 import { createRoom, ensureAuth, findWaitingRooms, getProfile, joinRoom, loadRoom, postChat, postMove, postResign, saveProfile, streamRoom, UserProfile, Room } from "@/lib/online"
@@ -71,7 +71,8 @@ function Onboarding({ onDone }: { onDone: (profile: UserProfile) => void }) {
       <button disabled={selected === null} onClick={() => {
         setAnswers(a => [...a, selected as number])
         setSelected(null)
-        if (step === QUESTIONS.length) finish()
+        const nextAnswers = [...answers, selected as number]
+        if (step === QUESTIONS.length) finish(nextAnswers)
         else setStep(s => s + 1)
       }} className="mt-5 w-full rounded-xl bg-backgroundBoxBoxHighlighted p-3 font-black disabled:opacity-40">
         {step === QUESTIONS.length ? "Create my rating" : "Next"}
@@ -113,37 +114,6 @@ function ChessBoard({ chess, orientation, onMove, disabled }: { chess: Chess, or
   </div>
 }
 
-function Engine({ chess, rating, onMove }: { chess: Chess, rating: number, onMove: (uci: string) => void }) {
-  const worker = useRef<Worker | null>(null)
-  const [ready, setReady] = useState(false)
-  useEffect(() => {
-    const base = process.env.NEXT_PUBLIC_BASE_PATH || ""
-    const w = new Worker(`${base}/engine/stockfish.js`)
-    worker.current = w
-    const handler = (e: MessageEvent) => {
-      const line = String(e.data)
-      if (line.includes("uciok")) {
-        w.postMessage("setoption name UCI_LimitStrength value true")
-        w.postMessage(`setoption name UCI_Elo value ${Math.max(1350, Math.min(2850, rating))}`)
-        w.postMessage("isready")
-      }
-      if (line.includes("readyok")) setReady(true)
-      const match = line.match(/^bestmove\s+(\S+)/)
-      if (match) onMove(match[1])
-    }
-    w.addEventListener("message", handler)
-    w.postMessage("uci")
-    return () => { w.postMessage("quit"); w.terminate() }
-  }, [rating, onMove])
-
-  const think = (fen: string) => {
-    if (!ready || !worker.current) return
-    worker.current.postMessage(`position fen ${fen}`)
-    worker.current.postMessage("go movetime 600")
-  }
-  return { think, ready }
-}
-
 export default function OnlineChess() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [uid, setUid] = useState("")
@@ -158,7 +128,9 @@ export default function OnlineChess() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<"play"|"chat">("play")
-  const [engineRequest, setEngineRequest] = useState<((fen: string) => void) | null>(null)
+  const engineWorkerRef = useRef<Worker | null>(null)
+  const [engineReady, setEngineReady] = useState(false)
+  const [engineThinking, setEngineThinking] = useState(false)
 
   useEffect(() => {
     (async () => {
@@ -171,6 +143,49 @@ export default function OnlineChess() {
       finally { setLoading(false) }
     })()
   }, [])
+
+  useEffect(() => {
+    if (!engineMode) return
+    const base = process.env.NEXT_PUBLIC_BASE_PATH || ""
+    const worker = new Worker(`${base}/engine/stockfish.js`)
+    engineWorkerRef.current = worker
+    const handler = (event: MessageEvent) => {
+      const line = String(event.data)
+      if (line.includes("uciok")) {
+        worker.postMessage("setoption name UCI_LimitStrength value true")
+        worker.postMessage(`setoption name UCI_Elo value ${Math.max(1350, Math.min(2850, profile?.rating || 1200))}`)
+        worker.postMessage("isready")
+      }
+      if (line.includes("readyok")) setEngineReady(true)
+      const best = line.match(/^bestmove\s+(\S+)/)
+      if (best && best[1] !== "(none)") {
+        setEngineThinking(false)
+        setEngineGame(current => {
+          const next = new Chess(current.fen())
+          try { next.move({ from: best[1].slice(0,2) as Square, to: best[1].slice(2,4) as Square, promotion: best[1][4] as any }) } catch {}
+          return next
+        })
+      }
+    }
+    worker.addEventListener("message", handler)
+    worker.postMessage("uci")
+    return () => {
+      worker.postMessage("quit")
+      worker.terminate()
+      engineWorkerRef.current = null
+      setEngineReady(false)
+      setEngineThinking(false)
+    }
+  }, [engineMode, profile?.rating])
+
+  useEffect(() => {
+    if (!engineMode || !engineReady || engineThinking || engineGame.turn() !== "b" || engineGame.isGameOver()) return
+    const worker = engineWorkerRef.current
+    if (!worker) return
+    setEngineThinking(true)
+    worker.postMessage(`position fen ${engineGame.fen()}`)
+    worker.postMessage("go movetime 600")
+  }, [engineMode, engineReady, engineThinking, engineGame])
 
   useEffect(() => {
     if (!roomId) return
@@ -196,19 +211,8 @@ export default function OnlineChess() {
 
   const myColor: "w"|"b"|null = room ? (room.white === uid ? "w" : room.black === uid ? "b" : null) : null
   const gameOver = room?.state?.result || onlineGame.isGameOver() ? (room?.state?.result || (onlineGame.isCheckmate() ? (onlineGame.turn() === "w" ? "0-1" : "1-0") : "1/2-1/2")) : ""
-  const engine = useMemo(() => engineMode ? null : null, [engineMode])
-
-  const playEngineMove = (uci: string) => {
-    setEngineGame(current => {
-      const next = new Chess(current.fen())
-      try { next.move({ from: uci.slice(0,2) as Square, to: uci.slice(2,4) as Square, promotion: uci[4] as any }) } catch {}
-      return next
-    })
-  }
-
-  const makeEngineWorker = useMemo(() => ({ request: (fen: string) => setEngineRequest(() => () => {}) }), [])
-
   const onHumanEngineMove = (from: string, to: string) => {
+    if (engineThinking || engineGame.turn() !== "w" || engineGame.isGameOver()) return
     setEngineGame(current => {
       const next = new Chess(current.fen())
       try {
@@ -326,7 +330,7 @@ export default function OnlineChess() {
         {screen === "game" && <section className="grid xl:grid-cols-[minmax(0,1fr)_380px] gap-4">
           <div className="rounded-2xl bg-backgroundBox p-3 md:p-5">
             <div className="flex items-center justify-between mb-3">
-              <div><div className="font-black">{engineMode ? "Stockfish" : room?.black ? `${orientation === "w" ? room.blackName : room.whiteName} • ${orientation === "w" ? room.blackRating : room.whiteRating}` : "Waiting..."}</div><div className="text-xs text-foregroundGrey">{engineMode ? "Local engine opponent" : roomId}</div></div>
+              <div><div className="font-black">{engineMode ? "Stockfish" : room?.black ? `${orientation === "w" ? room.blackName : room.whiteName} • ${orientation === "w" ? room.blackRating : room.whiteRating}` : "Waiting..."}</div><div className="text-xs text-foregroundGrey">{engineMode ? (engineThinking ? "Thinking..." : engineReady ? "Local Stockfish ready" : "Loading engine...") : roomId}</div></div>
               {!engineMode && <button onClick={() => postResign(roomId, uid)} className="rounded-lg bg-red-500/15 px-3 py-2 text-sm font-bold">Resign</button>}
             </div>
             <ChessBoard chess={engineMode ? engineGame : onlineGame} orientation={orientation} disabled={!engineMode && (myColor === null || onlineGame.turn() !== myColor || Boolean(gameOver))} onMove={engineMode ? onHumanEngineMove : makeOnlineMove} />
