@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase-admin/app"
-import { DatabaseReference as FirebaseDatabaseReference, getDatabase } from "firebase-admin/database"
+import { getDatabase } from "firebase-admin/database"
+import type { DatabaseReference as FirebaseDatabaseReference } from "firebase-admin/database"
 import { onValueCreated } from "firebase-functions/v2/database"
 import { logger } from "firebase-functions"
 import { Chess, Square } from "chess.js"
