@@ -77,9 +77,9 @@ export default function Nav() {
                         <Image draggable={false} height={30} width={30} alt="logo" src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/logo.svg`} className="navTop:mt-[-2px]" />
                         <div className="h-fit w-fit reduceNav:block hidden">Andromeda</div>
                     </Link>
-                    <Link href="/play" className="text-lg outline-none font-bold navTop:px-3 navTop:py-2 p-1.5 hover:bg-backgroundBoxHover hover:text-foregroundHighlighted transition-colors flex flex-row gap-2">
+                    <Link href="/knightly.html" className="text-lg outline-none font-bold navTop:px-3 navTop:py-2 p-1.5 hover:bg-backgroundBoxHover hover:text-foregroundHighlighted transition-colors flex flex-row gap-2">
                         <span className="text-2xl leading-none">♞</span>
-                        <span className="h-fit w-fit reduceNav:block hidden">Play Online</span>
+                        <span className="h-fit w-fit reduceNav:block hidden">Play vs Engines</span>
                     </Link>
                     {topLinks.map((link, i) => {
                         return (
