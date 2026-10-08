@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111318"><title>Knightly — Play Chess</title>
+<style>
+:root{--bg:#0d0f14;--panel:#171a21;--panel2:#20242d;--text:#f3f5f7;--muted:#9aa3b2;--accent:#d9ff52;--light:#f0d9b5;--dark:#b58863}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1c2130 0,#0d0f14 48%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+button,select,input{font:inherit}button{cursor:pointer;border:0}.wrap{max-width:1250px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.brand{font-size:25px;font-weight:900}.badge{background:var(--panel);padding:10px 14px;border-radius:999px;font-weight:800}
+.grid{display:grid;grid-template-columns:minmax(320px,760px) minmax(280px,380px);gap:16px;align-items:start}.card{background:rgba(23,26,33,.94);border:1px solid #2b303b;border-radius:18px;padding:15px;box-shadow:0 18px 50px #0005}
+.board{display:grid;grid-template-columns:repeat(8,1fr);width:min(76vw,720px);aspect-ratio:1;margin:auto;border-radius:12px;overflow:hidden;box-shadow:0 16px 40px #0008}.sq{display:grid;place-items:center;font-size:clamp(28px,7vw,68px);line-height:1;user-select:none}.sq.light{background:var(--light)}.sq.dark{background:var(--dark)}.sq.sel{outline:4px solid #e9ff55;outline-offset:-4px}.sq.last{box-shadow:inset 0 0 0 4px #d9ff5244}.wp{color:#fff;text-shadow:0 2px 3px #000}.bp{color:#161616;text-shadow:0 1px 1px #fff5}
+.row{display:flex;gap:8px;flex-wrap:wrap}.btn{background:var(--panel2);color:var(--text);padding:10px 13px;border-radius:10px;font-weight:800}.btn.primary{background:var(--accent);color:#111}.btn:disabled{opacity:.45;cursor:not-allowed}
+.engine-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}.engine{padding:12px;border-radius:12px;background:var(--panel2);text-align:left;color:var(--text);font-weight:800;border:1px solid transparent}.engine.active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.muted{color:var(--muted)}.small{font-size:12px}.title{font-size:18px;font-weight:900;margin:0 0 8px}.moves{min-height:90px;max-height:220px;overflow:auto;background:#0e1015;border-radius:10px;padding:10px;line-height:1.8}.status{padding:9px 11px;border-radius:10px;background:#0e1015;margin-top:10px}.eval{font-size:26px;font-weight:900}.bar{height:8px;background:#f4f4f4;border-radius:99px;overflow:hidden;margin:8px 0}.bar>i{display:block;background:#111;height:100%;width:50%;transition:.25s}
+.onboard{max-width:650px;margin:10vh auto}.level{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.level button{background:var(--panel2);color:var(--text);padding:14px;border-radius:12px;font-weight:900}.level button.active{outline:2px solid var(--accent)}input,select{background:#0e1015;color:var(--text);border:1px solid #333947;border-radius:10px;padding:11px;width:100%}.hide{display:none!important}.danger{color:#ff8f8f}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.board{width:min(94vw,720px)}.card{padding:12px}}@media(max-width:500px){.engine-list{grid-template-columns:1fr}.wrap{padding:9px}.level{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div><div class="brand">♞ Knightly</div><div class="muted">Static chess • review • engine play</div></div><div id="rating" class="badge">Unrated</div></header>
+<section id="onboard" class="card onboard">
+<h1 class="title">Set your Knightly level</h1>
+<p class="muted">This version needs no Firebase, Cloud Functions or server deployment. Choose your level and get a provisional rating for engine difficulty.</p>
+<input id="name" maxlength="24" placeholder="Chess name">
+<div class="level"><button data-level="beginner" class="active">Beginner</button><button data-level="intermediate">Intermediate</button><button data-level="advanced">Advanced</button></div>
+<div id="questions"></div><button id="start" class="btn primary" style="width:100%;margin-top:10px">Start playing</button>
+</section>
+<section id="app" class="grid hide">
+<div class="card"><div id="board" class="board"></div><div class="row" style="margin-top:12px"><button id="new" class="btn primary">New game</button><button id="flip" class="btn">Flip board</button><button id="undo" class="btn">Undo</button></div><div class="status"><b id="turn">White to move</b><span id="result"></span></div></div>
+<aside class="card">
+<h2 class="title">Choose engine</h2><div class="engine-list" id="engines"></div>
+<div style="margin-top:14px"><label class="small muted">Play as</label><select id="side"><option value="w">White</option><option value="b">Black</option></select></div>
+<div style="margin-top:10px"><label class="small muted">Engine strength</label><input id="elo" type="range" min="800" max="3000" step="50" value="1800"><div class="small muted"><span id="eloText">1800</span> Elo target where supported</div></div>
+<div style="margin-top:14px"><div class="eval" id="eval">Engine idle</div><div class="bar"><i id="evalbar"></i></div><div id="status" class="status">Select an engine.</div></div>
+<h3 class="title" style="margin-top:15px">Moves</h3><div id="moves" class="moves muted">No moves yet.</div>
+<div class="row" style="margin-top:10px"><button id="analyze" class="btn">Analyze position</button><button id="stop" class="btn">Stop engine</button></div>
+<p class="small muted" style="margin-top:13px">The four existing engine choices are exposed here. Large WASM assets are fetched from Git LFS media storage, avoiding GitHub's LFS-pointer problem on static hosting.</p>
+<p class="small muted">Keep the repository's engine licenses and attribution notices when redistributing these engines.</p>
+</aside></section>
+</div>
+<script type="module">
+import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/+esm";
+
+const REPO="akatsukixpain12-stack/Knightly-chess";
+const MEDIA="https://media.githubusercontent.com/media/"+REPO+"/main/public/engine/";
+const engines=[
+{id:"stockfish",name:"Stockfish",desc:"Strong general engine",kind:"hash",js:"./public/engine/stockfish.js",wasm:MEDIA+"stockfish.wasm"},
+{id:"dragon",name:"Dragon",desc:"Komodo/Dragon engine",kind:"hashbook",js:"./public/engine/dragon.js",wasm:MEDIA+"dragon.wasm",book:MEDIA+"book.bin"},
+{id:"explanation",name:"Explanation Engine",desc:"Komodo explanation engine",kind:"hash",js:"./public/engine/explanation-engine.js",wasm:MEDIA+"explanation-engine.wasm"},
+{id:"rodent",name:"Rodent",desc:"UCI Rodent engine",kind:"rodent",js:"./public/engine/rodent/rodent.js",wasm:MEDIA+"rodent.wasm",data:MEDIA+"rodent.data"}
+];
+const QUESTIONS=[
+["How many points is a queen usually worth?",["3","5","9","12"],2],
+["What is the main purpose of castling?",["Win a pawn","Improve king safety","Trade queens","Give check"],1],
+["Which is checkmate?",["A check with an escape","A check with no legal reply","Any capture","A discovered attack"],1]
+];
+
+let level="beginner",rating=700,quizIndex=0,score=0,chess=new Chess(),orientation="w",selected=null,lastMove=null,worker=null,engineId="stockfish",thinking=false;
+const $=id=>document.getElementById(id),clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+function estimated(){return Math.min(1800,{beginner:400,intermediate:800,advanced:1300}[level]+score*120)}
+function renderQuestion(){
+ const q=QUESTIONS[quizIndex];
+ if(!q){$("questions").innerHTML='<div class="status">Quiz complete. Starting rating: <b>'+estimated()+'</b></div>';return}
+ let s='<div class="small muted">Quick question '+(quizIndex+1)+'/'+QUESTIONS.length+'</div><b>'+q[0]+'</b><div class="row" style="margin-top:8px">';
+ q[1].forEach((x,i)=>s+='<button class="btn q" data-i="'+i+'">'+x+'</button>');s+='</div>';$("questions").innerHTML=s;
+ document.querySelectorAll(".q").forEach(b=>b.onclick=()=>{if(Number(b.dataset.i)===QUESTIONS[quizIndex][2])score++;quizIndex++;renderQuestion()});
+}
+document.querySelectorAll("[data-level]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-level]").forEach(x=>x.classList.remove("active"));b.classList.add("active");level=b.dataset.level});
+$("start").onclick=()=>{rating=estimated();$("rating").textContent=rating+" ELO";$("onboard").classList.add("hide");$("app").classList.remove("hide");newGame()};
+renderQuestion();
+
+function boardSquares(){const files=orientation==="w"?["a","b","c","d","e","f","g","h"]:["h","g","f","e","d","c","b","a"],ranks=orientation==="w"?[8,7,6,5,4,3,2,1]:[1,2,3,4,5,6,7,8];return ranks.flatMap(r=>files.map(f=>f+r))}
+const glyph={p:"♟",n:"♞",b:"♝",r:"♜",q:"♛",k:"♚",P:"♙",N:"♘",B:"♗",R:"♖",Q:"♕",K:"♔"};
+function render(){
+ const map=new Map();chess.board().forEach((row,r)=>row.forEach((p,c)=>p&&map.set(String.fromCharCode(97+c)+(8-r),p)));
+ let s="";boardSquares().forEach(sq=>{const p=map.get(sq),file=sq.charCodeAt(0)-96,rank=Number(sq[1]),light=(file+rank)%2===0; s+='<button class="sq '+(light?"light":"dark")+' '+(selected===sq?"sel ":"")+(lastMove&&(sq===lastMove.from||sq===lastMove.to)?"last":"")+'" data-sq="'+sq+'">'+(p?'<span class="'+(p.color==="w"?"wp":"bp")+'">'+glyph[p.color==="w"?p.type.toUpperCase():p.type]+"</span>":"")+"</button>"});
+ $("board").innerHTML=s;document.querySelectorAll(".sq").forEach(b=>b.onclick=()=>clickSquare(b.dataset.sq));
+ $("turn").textContent=chess.isGameOver()?"Game over":(chess.turn()==="w"?"White":"Black")+" to move";$("moves").textContent=chess.history().length?chess.history().join(" "):"No moves yet.";
+}
+function clickSquare(sq){
+ if(thinking||chess.isGameOver()||chess.turn()!==$("side").value)return;const p=chess.get(sq);
+ if(!selected){if(p&&p.color===chess.turn())selected=sq;render();return}
+ if(selected===sq){selected=null;render();return}
+ try{const m=chess.move({from:selected,to:sq,promotion:"q"});lastMove={from:m.from,to:m.to};selected=null;render();afterHumanMove()}catch{selected=null;render()}
+}
+function afterHumanMove(){if(chess.isGameOver()){finish();return}if(chess.turn()!==$("side").value)engineMove()}
+function finish(){$("result").textContent=chess.isCheckmate()?" • Checkmate":chess.isDraw()?" • Draw":""}
+function newGame(){stopEngine();chess=new Chess();selected=null;lastMove=null;render();if($("side").value==="b")setTimeout(engineMove,250)}
+function undo(){if(thinking)return;chess.undo();chess.undo();render()}
+$("new").onclick=newGame;$("flip").onclick=()=>{orientation=orientation==="w"?"b":"w";render()};$("undo").onclick=undo;$("side").onchange=newGame;$("elo").oninput=()=>$("eloText").textContent=$("elo").value;
+
+function engineUrl(e){if(e.kind==="hash")return e.js+"#"+encodeURIComponent(e.wasm)+",worker";if(e.kind==="hashbook")return e.js+"#"+encodeURIComponent(e.wasm)+"|"+encodeURIComponent(e.book);return e.js}
+function createRodent(){
+ const e=engines.find(x=>x.id==="rodent");
+ const code='let sab,ia,ua;self.onmessage=async function(ev){if(ev.data&&ev.data.sab){sab=ev.data.sab;ia=new Int32Array(sab,0,2);ua=new Uint8Array(sab,8);self.Module={locateFile:function(p){return p.endsWith(".wasm")?'+JSON.stringify(e.wasm)+':'+JSON.stringify(e.data)+'},print:function(x){postMessage(String(x))},printErr:function(x){postMessage(String(x))}};importScripts('+JSON.stringify(e.js)+');return;}if(ev.data&&ev.data.cmd){const s=new TextEncoder().encode(ev.data.cmd+"\\n");ua.fill(0);ua.set(s.slice(0,ua.length-1),0);Atomics.store(ia,1,s.length);Atomics.store(ia,0,1);Atomics.notify(ia,0);}};';
+ const blob=new Blob([code],{type:"application/javascript"}),w=new Worker(URL.createObjectURL(blob)),sab=new SharedArrayBuffer(8+8192);w.postMessage({sab});return {w,sab}
+}
+function createWorker(e){return e.kind==="rodent"?createRodent():{w:new Worker(engineUrl(e)),sab:null}}
+function startEngine(){
+ stopEngine();const e=engines.find(x=>x.id===engineId),made=createWorker(e);worker=made.w;
+ worker.onmessage=ev=>handleEngineLine(String(ev.data));worker.onerror=ev=>{thinking=false;$("status").innerHTML='<span class="danger">Engine error: '+(ev.message||"failed to load")+"</span>"};
+ if(e.kind==="rodent"){setTimeout(()=>sendRodent("uci"),100);return}worker.postMessage("uci")
+}
+function sendRodent(cmd){if(!worker)return;worker.postMessage({cmd})}
+function send(cmd){if(engineId==="rodent")sendRodent(cmd);else worker&&worker.postMessage(cmd)}
+function handleEngineLine(line){
+ if(line.startsWith("id name"))$("status").textContent=line;
+ if(line.includes("uciok")){if(engineId==="stockfish"){send("setoption name UCI_LimitStrength value true");send("setoption name UCI_Elo value "+clamp(Number($("elo").value),1350,2850))}send("isready")}
+ if(line.includes("readyok"))$("status").textContent="Ready — "+engines.find(e=>e.id===engineId).name;
+ const info=line.match(/info .*?(?:score cp (-?\d+)|score mate (-?\d+)).*?depth (\d+)/);
+ if(info){const cp=info[1]?Number(info[1]):(Number(info[2])>0?1000:-1000);$("eval").textContent=info[2]?"Mate "+info[2]:(cp/100).toFixed(2);$("evalbar").style.width=clamp(50+cp/20,2,98)+"%"}
+ const bm=line.match(/^bestmove\s+(\S+)/);if(bm&&bm[1]!=="(none)"){thinking=false;applyEngineMove(bm[1])}
+}
+function applyEngineMove(uci){try{const m=chess.move({from:uci.slice(0,2),to:uci.slice(2,4),promotion:uci[4]||"q"});lastMove={from:m.from,to:m.to};render();finish();$("status").textContent="Engine played "+m.san}catch{$("status").textContent="Engine returned an invalid move: "+uci}}
+function engineMove(){if(chess.isGameOver())return;if(!worker)startEngine();thinking=true;$("status").textContent="Thinking…";send("position fen "+chess.fen());send("go movetime 800")}
+function stopEngine(){if(worker){try{send("quit")}catch{}worker.terminate();worker=null}thinking=false}
+$("stop").onclick=stopEngine;
+$("analyze").onclick=()=>{if(!worker)startEngine();setTimeout(()=>{thinking=true;send("position fen "+chess.fen());send("go depth 16")},400)};
+function engineButtons(){$("engines").innerHTML=engines.map(e=>'<button class="engine '+(e.id===engineId?"active":"")+'" data-engine="'+e.id+'">'+e.name+'<div class="small muted">'+e.desc+"</div></button>").join("");document.querySelectorAll("[data-engine]").forEach(b=>b.onclick=()=>{engineId=b.dataset.engine;document.querySelectorAll(".engine").forEach(x=>x.classList.remove("active"));b.classList.add("active");startEngine()})}
+engineButtons();window.addEventListener("beforeunload",stopEngine);
+</script>
+</body></html>
