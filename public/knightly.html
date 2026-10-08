@@ -42,7 +42,8 @@ button,select,input{font:inherit}button{cursor:pointer;border:0}.wrap{max-width:
 <script type="module">
 import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/+esm";
 
-const REPO="akatsukixpain12-stack/Knightly-chess";\nconst ENGINE_BASE=location.pathname.endsWith("knightly.html")?"./engine/":"./public/engine/";
+const REPO="akatsukixpain12-stack/Knightly-chess";
+const ENGINE_BASE=location.pathname.endsWith("knightly.html")?"./engine/":"./public/engine/";
 const MEDIA="https://media.githubusercontent.com/media/"+REPO+"/main/public/engine/";
 const engines=[
 {id:"stockfish",name:"Stockfish",desc:"Strong general engine",kind:"hash",js:ENGINE_BASE+"stockfish.js",wasm:MEDIA+"stockfish.wasm"},
