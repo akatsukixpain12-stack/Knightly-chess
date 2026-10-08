@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase-admin/app"
-import { getDatabase } from "firebase-admin/database"
+import { getDatabase, DatabaseReference as FirebaseDatabaseReference } from "firebase-admin/database"
 import { onValueCreated } from "firebase-functions/v2/database"
 import { logger } from "firebase-functions"
 import { Chess, Square } from "chess.js"
@@ -18,6 +18,32 @@ function resultFor(chess: Chess): State["result"] {
 function eloDelta(a: number, b: number, score: number) {
   const expected = 1 / (1 + Math.pow(10, (b - a) / 400))
   return Math.round(32 * (score - expected))
+}
+
+async function applyRatingForRoom(roomRef: FirebaseDatabaseReference, roomId: string, result: State["result"]) {
+  const room = (await roomRef.once("value")).val()
+  if (!room || room.ratingApplied || !room.black || !room.blackRating) return
+  const whiteScore = result === "1-0" ? 1 : result === "1/2-1/2" ? 0.5 : 0
+  const blackScore = 1 - whiteScore
+  const whiteDelta = eloDelta(room.whiteRating, room.blackRating, whiteScore)
+  const blackDelta = -eloDelta(room.blackRating, room.whiteRating, blackScore)
+  const updates: Record<string, unknown> = {}
+  updates[`users/${room.white}/rating`] = Math.max(100, room.whiteRating + whiteDelta)
+  updates[`users/${room.black}/rating`] = Math.max(100, room.blackRating + blackDelta)
+  updates[`users/${room.white}/games`] = { ".sv": { "increment": 1 } }
+  updates[`users/${room.black}/games`] = { ".sv": { "increment": 1 } }
+  if (whiteScore === 1) {
+    updates[`users/${room.white}/wins`] = { ".sv": { "increment": 1 } }
+    updates[`users/${room.black}/losses`] = { ".sv": { "increment": 1 } }
+  } else if (whiteScore === 0) {
+    updates[`users/${room.white}/losses`] = { ".sv": { "increment": 1 } }
+    updates[`users/${room.black}/wins`] = { ".sv": { "increment": 1 } }
+  } else {
+    updates[`users/${room.white}/draws`] = { ".sv": { "increment": 1 } }
+    updates[`users/${room.black}/draws`] = { ".sv": { "increment": 1 } }
+  }
+  updates[`rooms/${roomId}/ratingApplied`] = true
+  await getDatabase().ref().update(updates)
 }
 
 export const referee = onValueCreated(
@@ -69,31 +95,9 @@ export const referee = onValueCreated(
     await event.data.ref.child("accepted").set(true)
     logger.info("Accepted move", { roomId: event.params.roomId, proposalId: event.params.proposalId, san: accepted.san })
 
-    if (accepted.state.result) {
-      const room = (await roomRef.once("value")).val()
-      if (!room || room.ratingApplied) return
-      const whiteScore = accepted.state.result === "1-0" ? 1 : accepted.state.result === "1/2-1/2" ? 0.5 : 0
-      const blackScore = 1 - whiteScore
-      const whiteDelta = eloDelta(room.whiteRating, room.blackRating, whiteScore)
-      const blackDelta = -eloDelta(room.blackRating, room.whiteRating, blackScore)
-      const updates: Record<string, unknown> = {}
-      updates[`users/${room.white}/rating`] = Math.max(100, room.whiteRating + whiteDelta)
-      updates[`users/${room.black}/rating`] = Math.max(100, room.blackRating + blackDelta)
-      updates[`users/${room.white}/games`] = { ".sv": { "increment": 1 } }
-      updates[`users/${room.black}/games`] = { ".sv": { "increment": 1 } }
-      if (whiteScore === 1) {
-        updates[`users/${room.white}/wins`] = { ".sv": { "increment": 1 } }
-        updates[`users/${room.black}/losses`] = { ".sv": { "increment": 1 } }
-      } else if (whiteScore === 0) {
-        updates[`users/${room.white}/losses`] = { ".sv": { "increment": 1 } }
-        updates[`users/${room.black}/wins`] = { ".sv": { "increment": 1 } }
-      } else {
-        updates[`users/${room.white}/draws`] = { ".sv": { "increment": 1 } }
-        updates[`users/${room.black}/draws`] = { ".sv": { "increment": 1 } }
-      }
-      updates[`rooms/${event.params.roomId}/ratingApplied`] = true
-      await db.ref().update(updates)
-    }
+    if (accepted.state.result) await applyRatingForRoom(roomRef, event.params.roomId, accepted.state.result)
+  }
+
   },
 )
 
@@ -110,5 +114,6 @@ export const resignation = onValueCreated(
       status: "finished",
       state: { ...room.state, result },
     })
+    await applyRatingForRoom(roomRef, event.params.roomId, result)
   },
 )
