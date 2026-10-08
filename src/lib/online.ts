@@ -165,14 +165,8 @@ export function streamRoom(roomId: string, onChange: (room: Room) => void) {
   ensureAuth().then(({ token }) => {
     if (stopped) return
     source = new EventSource(`${DB_URL}/rooms/${roomId}.json?auth=${encodeURIComponent(token)}`)
-    const apply = (event: MessageEvent) => {
-      try {
-        const payload = JSON.parse(event.data)
-        if (payload?.data !== undefined) {
-          // Firebase sends paths relative to the streamed location.
-          onChange((payload.path === "/" ? payload.data : undefined) as Room)
-        }
-      } catch {}
+    const apply = () => {
+      loadRoom(roomId).then(onChange).catch(() => {})
     }
     source.addEventListener("put", apply)
     source.addEventListener("patch", apply)
