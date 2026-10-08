@@ -5,20 +5,41 @@
     "users": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && !data.exists()",
         ".validate": "newData.hasChildren(['name','rating','level','provisional','games','wins','losses','draws'])",
-        "rating": { ".validate": "newData.isNumber() && newData.val() >= 100 && newData.val() <= 4000" },
-        "games": { ".validate": "newData.isNumber() && newData.val() >= 0" },
-        "wins": { ".validate": "newData.isNumber() && newData.val() >= 0" },
-        "losses": { ".validate": "newData.isNumber() && newData.val() >= 0" },
-        "draws": { ".validate": "newData.isNumber() && newData.val() >= 0" }
+        "name": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 24"
+        },
+        "level": {
+          ".validate": "newData.val() === 'beginner' || newData.val() === 'intermediate' || newData.val() === 'advanced'"
+        },
+        "provisional": {
+          ".validate": "newData.isBoolean()"
+        },
+        "rating": {
+          ".validate": "newData.isNumber() && newData.val() >= 100 && newData.val() <= 4000"
+        },
+        "games": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "wins": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "losses": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "draws": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        }
       }
     },
     "rooms": {
-      ".indexOn": ["status"],
+      ".indexOn": [
+        "status"
+      ],
       "$roomId": {
         ".read": "auth != null",
-        ".write": "auth != null && ((!data.exists() && newData.child('white').val() === auth.uid) || (data.exists() && data.child('black').val() === null && newData.child('black').val() === auth.uid))",
+        ".write": "auth != null && ((!data.exists() && newData.child('white').val() === auth.uid) || (data.exists() && data.child('black').val() === null && newData.child('black').val() === auth.uid && newData.child('white').val() === data.child('white').val() && newData.child('whiteRating').val() === data.child('whiteRating').val()))",
         "proposals": {
           "$proposalId": {
             ".write": "auth != null && !data.exists() && (root.child('rooms').child($roomId).child('white').val() === auth.uid || root.child('rooms').child($roomId).child('black').val() === auth.uid)",
