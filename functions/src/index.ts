@@ -31,8 +31,7 @@ export const referee = onValueCreated(
     const stateRef = roomRef.child("state")
 
     let accepted: { state: State; san: string } | null = null
-    await stateRef.transaction((raw) => {
-      const room = raw ? raw : null
+    await roomRef.transaction((room) => {
       if (!room || room.status !== "playing" || room.state?.result) return room
       const state = room.state as State
       const expectedUid = state.turn === "w" ? room.white : room.black
