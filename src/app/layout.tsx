@@ -9,11 +9,11 @@ const roboto = Roboto({
 })
 
 export const metadata: Metadata = {
-  title: "Andromeda - Free Chess Analyzer",
-  description: "Analyze your chess games and improve your skills completely free.",
+  title: "Knightly Chess - Play, Review & Analyze",
+  description: "Knightly is a chess platform for game review, Stockfish analysis, online play, ELO matchmaking and chess improvement.",
   keywords: ["chess", "chess analysis", "free chess analyzer", "free chess.com analyzer", "analyze chess for free", "analyze chess games", "brilliant move chess", "brilliant chess", "brilliant-chess"],
   authors: [{ name: 'Delo', url: "https://github.com/wdeloo" }],
-  applicationName: "Andromeda",
+  applicationName: "Knightly",
 
   icons: {
     icon: "favicon.ico"
