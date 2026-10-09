@@ -138,28 +138,37 @@ export default function Game() {
 
     useEffect(() => {
         (async () => {
-            const openingsRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/openings/openings.json`)
-            const openings = await openingsRes.json()
-            setOpenings(openings as openings)
+            const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim() || ""
+            try {
+                const openingsRes = await fetch(`${basePath}/openings/openings.json`)
+                if (!openingsRes.ok) throw new Error("Opening data unavailable")
+                const openings = await openingsRes.json()
+                setOpenings(openings as openings)
+            } catch {
+                // Opening names are optional; the analysis board must still work without them.
+                setOpenings({})
+            }
         })()
     }, [])
 
     useEffect(() => {
+        const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim() || ""
+
         if (engine === "andromeda") {
-            engineWorkerRef.current = new window.Worker(`${process.env.NEXT_PUBLIC_BASE_PATH}/engine/andromeda.js`)
-        } else if (!wasmThreadsSupported()) {
+            // This repository currently does not include the Andromeda worker/WASM files.
+            // Do not launch a guaranteed-404 worker; keep analysis usable with Stockfish.
+            pushPageWarning(setErrors, "Andromeda engine unavailable", "The Andromeda worker files are not included in this build. Stockfish will be used for now.")
+        }
+
+        if (!wasmThreadsSupported()) {
             if (!wasmSupported()) {
-                // Web Assembly not Supported
                 pushPageWarning(setErrors, NOT_SUPPORTED_WASM_WARNING[0], NOT_SUPPORTED_WASM_WARNING[1])
-                engineWorkerRef.current = new window.Worker(`${process.env.NEXT_PUBLIC_BASE_PATH}/engine/stockfish-asm.js`)
+                engineWorkerRef.current = new window.Worker(`${basePath}/engine/stockfish-single.js`)
             } else {
-                // Web Assembly Threads not Supported
-                // pushPageWarning(setErrors, NOT_SUPPORTED_WASM_THREADS_WARNING[0], NOT_SUPPORTED_WASM_THREADS_WARNING[1])
-                engineWorkerRef.current = new window.Worker(`${process.env.NEXT_PUBLIC_BASE_PATH}/engine/stockfish-single.js`)
+                engineWorkerRef.current = new window.Worker(`${basePath}/engine/stockfish-single.js`)
             }
         } else {
-            // Supported
-            engineWorkerRef.current = new window.Worker(`${process.env.NEXT_PUBLIC_BASE_PATH}/engine/stockfish.js`)
+            engineWorkerRef.current = new window.Worker(`${basePath}/engine/stockfish.js`)
         }
 
         const stockfish = engineWorkerRef.current
