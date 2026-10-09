@@ -256,3 +256,62 @@ body:has(.knightly-home) nav > div:nth-child(2) {
   .knightly-hero { padding-top: 30px; }
   .knightly-tools { margin-top: 48px; }
 }
+
+
+/* The play lobby shares Knightly's cream-and-leaf visual identity. */
+.knightly-play-shell {
+  background: #f5f6ee !important;
+  color: #273027 !important;
+}
+.knightly-play-shell .bg-background {
+  background: #f5f6ee !important;
+  color: #273027 !important;
+}
+.knightly-play-shell .bg-backgroundBox {
+  background: #fff !important;
+  border: 1px solid #e2e8d9;
+  box-shadow: 0 10px 32px #26351c0a;
+}
+.knightly-play-shell .bg-backgroundBoxBox {
+  background: #f2f6eb !important;
+  color: #30392e;
+}
+.knightly-play-shell .text-foregroundGrey {
+  color: #758071 !important;
+}
+.knightly-play-shell .bg-backgroundBoxBoxHighlighted {
+  background: #b9ef82 !important;
+  color: #27351d !important;
+}
+.knightly-play-shell button,
+.knightly-play-shell a {
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+.knightly-play-shell button:not(:disabled):hover,
+.knightly-play-shell a:hover {
+  transform: translateY(-2px);
+}
+.knightly-play-shell button:disabled {
+  cursor: not-allowed;
+}
+.knightly-play-shell input {
+  color: #273027;
+  border: 1px solid #dfe7d7;
+}
+.knightly-play-shell input::placeholder {
+  color: #929b8d;
+}
+.knightly-play-shell header a {
+  color: #47772d;
+}
+.knightly-play-shell .text-red-500\/15 {
+  color: #9f3329;
+}
+@media (max-width: 640px) {
+  .knightly-play-shell {
+    padding: 12px;
+  }
+  .knightly-play-shell h1 {
+    letter-spacing: -.04em;
+  }
+}
