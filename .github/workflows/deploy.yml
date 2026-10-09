@@ -32,6 +32,29 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Set up Bun for the Stockfish GUI
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Prepare Stockfish 19 GUI assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p stockfish-gui/assets/books stockfish-gui/public/engine
+          curl -fL --retry 3 https://raw.githubusercontent.com/LabinatorSolutions/stockfish-chess-web-gui/master/assets/books/openings.bin -o stockfish-gui/assets/books/openings.bin
+          curl -fL --retry 3 https://raw.githubusercontent.com/LabinatorSolutions/stockfish-chess-web-gui/master/public/engine/stockfish-19-lite.js -o stockfish-gui/public/engine/stockfish-19-lite.js
+          curl -fL --retry 3 https://raw.githubusercontent.com/LabinatorSolutions/stockfish-chess-web-gui/master/public/engine/stockfish-19-lite.wasm -o stockfish-gui/public/engine/stockfish-19-lite.wasm
+          curl -fL --retry 3 https://raw.githubusercontent.com/LabinatorSolutions/stockfish-chess-web-gui/master/public/favicon.png -o stockfish-gui/public/favicon.png
+          curl -fL --retry 3 https://raw.githubusercontent.com/LabinatorSolutions/stockfish-chess-web-gui/master/public/icon-192.png -o stockfish-gui/public/icon-192.png
+          curl -fL --retry 3 https://raw.githubusercontent.com/LabinatorSolutions/stockfish-chess-web-gui/master/public/icon-512.png -o stockfish-gui/public/icon-512.png
+          cd stockfish-gui
+          bun install
+          bun run build
+          cd ..
+          mkdir -p public/stockfish-gui
+          cp -a stockfish-gui/dist/. public/stockfish-gui/
+
       - name: Build static site
         run: npm run build
         env:
