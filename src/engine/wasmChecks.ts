@@ -12,16 +12,16 @@ type PerformanceWithMemory = Performance & {
 }
 
 /**
- * Return an approximate amount of memory available to the browser, in bytes.
- * Chromium exposes performance.memory; other browsers may not. Use a
+ * Return an approximate browser memory budget in MiB for Stockfish's UCI Hash option.
+ * Chromium exposes performance.memory in bytes; other browsers may not. Use a
  * conservative 512 MiB estimate when the API is unavailable.
  */
 export function getAproxMemory(): number {
-  if (typeof performance === "undefined") return 512 * 1024 * 1024
+  if (typeof performance === "undefined") return 512
 
   const memory = (performance as PerformanceWithMemory).memory
   if (memory && typeof memory.jsHeapSizeLimit === "number" && memory.jsHeapSizeLimit > 0) {
-    return memory.jsHeapSizeLimit
+    return Math.max(128, Math.floor(memory.jsHeapSizeLimit / (1024 * 1024)))
   }
 
   // Device memory is reported in GiB on browsers that implement this API.
@@ -30,10 +30,10 @@ export function getAproxMemory(): number {
     : undefined
 
   if (navigatorWithMemory?.deviceMemory && navigatorWithMemory.deviceMemory > 0) {
-    return navigatorWithMemory.deviceMemory * 1024 * 1024 * 1024 * 0.5
+    return Math.max(128, Math.floor(navigatorWithMemory.deviceMemory * 1024 * 0.5))
   }
 
-  return 512 * 1024 * 1024
+  return 512
 }
 
 /** True when this runtime exposes WebAssembly. */
