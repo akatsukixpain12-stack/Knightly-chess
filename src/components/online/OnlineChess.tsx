@@ -153,8 +153,9 @@ export default function OnlineChess() {
         const saved = localStorage.getItem("knightly.profile")
         if (saved) {
           try { setProfile(JSON.parse(saved) as UserProfile) } catch {}
+        } else {
+          setError(e instanceof Error ? e.message : "Online service unavailable")
         }
-        setError(e instanceof Error ? e.message : "Online service unavailable")
       } finally {
         setLoading(false)
       }
