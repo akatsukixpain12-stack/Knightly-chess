@@ -173,8 +173,9 @@ export default function Game() {
 
         const stockfish = engineWorkerRef.current
 
-        const threads = navigator.hardwareConcurrency ?? 1
-        const hash = Math.floor(getAproxMemory() / 4)
+        // Keep analysis responsive without monopolizing lower-memory laptops.
+        const threads = Math.max(1, Math.min(4, navigator.hardwareConcurrency ?? 1))
+        const hash = Math.max(64, Math.min(512, Math.floor(getAproxMemory() / 4)))
 
         const errorTimeout = setTimeout(() => pushPageError(setErrors, 'The browser is having some troubles loading Stockfish', "If the app doesn't work properly try restarting the browser."), 15000);
         (async () => {
