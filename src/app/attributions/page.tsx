@@ -48,6 +48,17 @@ export default function Attributions() {
                         <li>License: <Link target="_blank" className="text-blue-600 hover:underline font-bold" href="https://github.com/nmrugg/stockfish.js/blob/master/license.txt">GPL-3.0</Link></li>
                     </ul>
                 </section>
+                <section className="bg-backgroundBox p-6 w-full rounded-borderRoundness">
+                    <h1 className="text-2xl font-bold flex flex-row items-center mx-auto mb-8 w-fit gap-2">
+                        <div className="grid h-12 w-12 place-items-center rounded-xl bg-backgroundBoxBox text-3xl">♟</div>
+                        Stockfish Chess Web GUI
+                    </h1>
+                    <ul className="text-lg">
+                        <li>Original project: <Link target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-bold" href="https://github.com/LabinatorSolutions/stockfish-chess-web-gui">LabinatorSolutions</Link></li>
+                        <li>License: <Link target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-bold" href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3.0</Link></li>
+                        <li>Engine: Stockfish 19, distributed under its applicable GPL license.</li>
+                    </ul>
+                </section>
             </main>
         </div>
     )
