@@ -40,6 +40,7 @@ export default function Nav() {
     }
 
     const botLinks: BotLinks[] = [
+        { label: "Donate", href: DONATE_URL, icon: (props: {className: string}) => <span className={props.className}>♥</span> },
         { label: "Source Code", href: "https://github.com/akatsukixpain12-stack/Knightly-chess", icon: (props: {className: string}) => <GitHub class={props.className} /> },
         { label: "Attributions", href: "/attributions", icon: (props: {className: string}) => <Licenses class={props.className} /> },
     ]
@@ -82,6 +83,10 @@ export default function Nav() {
                         <span className="text-2xl leading-none">♞</span>
                         <span className="h-fit w-fit reduceNav:block hidden">Play Online</span>
                     </Link>
+                    <Link href="/engine-lab" className="text-lg outline-none font-bold navTop:px-3 navTop:py-2 p-1.5 hover:bg-backgroundBoxHover hover:text-foregroundHighlighted transition-colors flex flex-row gap-2">
+                        <span className="text-2xl leading-none">♟</span>
+                        <span className="h-fit w-fit reduceNav:block hidden">Engine Lab</span>
+                    </Link>
                     {topLinks.map((link, i) => {
                         return (
                             <button onClick={link?.click} onMouseEnter={link?.hover} onMouseLeave={link?.unHover} type="button" key={i} className="text-lg outline-none font-bold navTop:px-3 navTop:py-2 p-1.5 hover:bg-backgroundBoxHover hover:text-foregroundHighlighted transition-colors flex flex-row gap-2">
@@ -94,7 +99,7 @@ export default function Nav() {
                 <div className="flex navTop:flex-col flex-row text-sm font-bold navTop:w-full navTop:h-fit">
                     {botLinks.map((link, i) => {
                         return (
-                            <Link draggable={false} key={i} target="_blank" href={link.href} className="flex flex-row gap-2 h-full navTop:h-fit reduceNav:px-3 navTop:justify-start justify-center items-center navTop:py-2 p-2 group hover:bg-backgroundBoxHover text-foregroundGrey hover:text-foregroundHighlighted transition-colors">
+                            <Link draggable={false} key={i} target="_blank" rel="noopener noreferrer" href={link.href} className="flex flex-row gap-2 h-full navTop:h-fit reduceNav:px-3 navTop:justify-start justify-center items-center navTop:py-2 p-2 group hover:bg-backgroundBoxHover text-foregroundGrey hover:text-foregroundHighlighted transition-colors">
                                 <link.icon className="fill-foregroundGrey transition-colors group-hover:fill-foregroundHighlighted" />
                                 <span className="reduceNav:block hidden">{link.label}</span>
                             </Link>
