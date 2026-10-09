@@ -1,32 +1,22 @@
 import type { NextConfig } from "next"
 
+// GitHub Pages can set NEXT_PUBLIC_BASE_PATH (for example, "/Brilliant-Chess").
+// Vercel and local development should leave it unset so assets use root URLs.
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim() || undefined
+
 const nextConfig: NextConfig = {
-  /* config options here */
-  // reactStrictMode: false,
+  // This project is deployed as a static export for GitHub Pages.
   output: "export",
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH,
-  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH + "/",
+  ...(basePath
+    ? {
+        basePath,
+        assetPrefix: `${basePath}/`,
+      }
+    : {}),
   distDir: "dist",
   images: {
     unoptimized: true,
   },
-  async headers() {
-    return [
-      {
-        source: `${process.env.NEXT_PUBLIC_BASE_PATH}/(.*)`,
-        headers: [
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
-        ],
-      },
-      {
-        source: `${process.env.NEXT_PUBLIC_BASE_PATH}/engine/(.*)`,
-        headers: [
-          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
-        ],
-      },
-    ]
-  }
 }
 
 export default nextConfig
