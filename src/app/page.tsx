@@ -38,18 +38,18 @@ export default function Home() {
               <div className="knightly-copy max-w-2xl">
                 <div className="knightly-pill mb-5 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-extrabold tracking-wide">
                   <span className="knightly-live-dot" />
-                  YOUR CHESS JOURNEY STARTS HERE
+                  FREE CHESS ANALYSIS · ENGINE POWERED
                 </div>
                 <h1 className="knightly-title text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl xl:text-7xl">
-                  Make every move<br />
-                  <span>mean something.</span>
+                  Find the moment<br />
+                  <span>your game changed.</span>
                 </h1>
                 <p className="knightly-subtitle mt-5 max-w-xl text-base leading-7 sm:text-lg">
-                  A friendly space to play, analyze, and get better at chess. Learn at your own pace — your next breakthrough starts with one move.
+                  Review your games, spot the turning points, and see stronger moves with engine-powered analysis. No noise — just useful feedback to help you improve.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <a href="#analysis" className="knightly-button knightly-button-primary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
-                    Explore the analysis <span className="ml-2" aria-hidden="true">↗</span>
+                    Analyze a game <span className="ml-2" aria-hidden="true">↗</span>
                   </a>
                   <a href={`${basePath}/play`} className="knightly-button knightly-button-secondary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
                     <span className="mr-2 text-lg" aria-hidden="true">♞</span> Play a game
@@ -68,8 +68,8 @@ export default function Home() {
                 <div className="knightly-board-card relative">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
-                      <p className="knightly-eyebrow text-xs font-extrabold uppercase tracking-[.16em]">Your practice board</p>
-                      <p className="knightly-board-heading mt-1 text-lg font-black">One move at a time.</p>
+                      <p className="knightly-eyebrow text-xs font-extrabold uppercase tracking-[.16em]">Position preview</p>
+                      <p className="knightly-board-heading mt-1 text-lg font-black">Every move tells a story.</p>
                     </div>
                     <span className="knightly-status rounded-full px-3 py-1.5 text-xs font-extrabold">READY TO PLAY <span aria-hidden="true">●</span></span>
                   </div>
@@ -93,8 +93,8 @@ export default function Home() {
                     <span className="knightly-footer-arrow" aria-hidden="true">↗</span>
                   </div>
                 </div>
-                <div className="knightly-float-chip knightly-float-top"><span>✦</span> Better moves, step by step</div>
-                <div className="knightly-float-chip knightly-float-bottom"><span>♟</span> Your next move matters</div>
+                <div className="knightly-float-chip knightly-float-top"><span>✦</span> Find your turning point</div>
+                <div className="knightly-float-chip knightly-float-bottom"><span>♟</span> Learn from every game</div>
               </div>
             </div>
 
