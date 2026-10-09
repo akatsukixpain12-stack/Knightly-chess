@@ -2,14 +2,15 @@
   "name": "andromeda",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://wdeloo.github.io/Brilliant-Chess/",
+  "homepage": "https://akatsukixpain12-stack.github.io/Knightly-chess/",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -t"
+    "predeploy": "npm run build:pages",
+    "deploy": "gh-pages -d out -t",
+    "build:pages": "NEXT_PUBLIC_BASE_PATH=/Knightly-chess next build"
   },
   "dependencies": {
     "chess.js": "github:jhlywa/chess.js#9cde04c51e6ad5f7898bf10a5c712efdf4af1488",
