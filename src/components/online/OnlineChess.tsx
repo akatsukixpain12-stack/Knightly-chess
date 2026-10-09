@@ -28,8 +28,8 @@ function Onboarding({ onDone }: { onDone: (profile: UserProfile) => void }) {
   const [answers, setAnswers] = useState<number[]>([])
   const [selected, setSelected] = useState<number | null>(null)
 
-  const finish = () => {
-    const correct = answers.reduce((n, a, i) => n + (a === QUESTIONS[i].correct ? 1 : 0), 0)
+  const finish = (finalAnswers: number[] = answers) => {
+    const correct = finalAnswers.reduce((n, a, i) => n + (a === QUESTIONS[i].correct ? 1 : 0), 0)
     const profile: UserProfile = {
       name: name.trim() || "Knightly Player",
       level,
