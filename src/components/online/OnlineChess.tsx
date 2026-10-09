@@ -134,13 +134,30 @@ export default function OnlineChess() {
 
   useEffect(() => {
     (async () => {
+      // A local profile keeps the offline engine playable even when the optional
+      // Firebase multiplayer backend has not been configured.
       try {
         const auth = await ensureAuth()
         setUid(auth.uid)
         const existing = await getProfile(auth.uid)
-        if (existing) setProfile(existing)
-      } catch (e) { setError(e instanceof Error ? e.message : "Online service unavailable") }
-      finally { setLoading(false) }
+        if (existing) {
+          setProfile(existing)
+          try { localStorage.setItem("knightly.profile", JSON.stringify(existing)) } catch {}
+        } else {
+          const saved = localStorage.getItem("knightly.profile")
+          if (saved) {
+            try { setProfile(JSON.parse(saved) as UserProfile) } catch {}
+          }
+        }
+      } catch (e) {
+        const saved = localStorage.getItem("knightly.profile")
+        if (saved) {
+          try { setProfile(JSON.parse(saved) as UserProfile) } catch {}
+        }
+        setError(e instanceof Error ? e.message : "Online service unavailable")
+      } finally {
+        setLoading(false)
+      }
     })()
   }, [])
 
@@ -223,10 +240,17 @@ export default function OnlineChess() {
   }
 
   async function saveOnboarding(p: UserProfile) {
-    try {
-      await saveProfile(uid, p)
-      setProfile(p)
-    } catch (e) { setError(e instanceof Error ? e.message : "Could not save profile") }
+    // Save locally first: this is enough for local engine games and survives reloads.
+    try { localStorage.setItem("knightly.profile", JSON.stringify(p)) } catch {}
+    setProfile(p)
+    setError("")
+    // Multiplayer profile sync is optional; report the missing backend only when
+    // the player actually tries to use multiplayer, not when starting an offline game.
+    if (uid) {
+      try { await saveProfile(uid, p) } catch (e) {
+        setError(e instanceof Error ? e.message : "Profile saved locally; multiplayer sync failed")
+      }
+    }
   }
 
   async function queueForPlayer() {
