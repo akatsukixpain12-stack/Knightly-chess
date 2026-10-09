@@ -15,7 +15,7 @@
   "dependencies": {
     "chess.js": "github:jhlywa/chess.js#9cde04c51e6ad5f7898bf10a5c712efdf4af1488",
     "howler": "^2.2.4",
-    "next": "^15.1.7",
+    "next": "15.1.11",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
