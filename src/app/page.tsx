@@ -11,7 +11,7 @@ import GameButtons from "@/components/menu/analysis/gameButtons"
 const tools = [
   { icon: "♟", number: "01", title: "Analyze a game", text: "Find the turning points, understand your mistakes, and discover stronger moves.", href: "#analysis", action: "Open analysis", tone: "mint" },
   { icon: "⚔", number: "02", title: "Play chess", text: "Take your ideas to the board and put your skills into practice.", href: "/play", action: "Play a game", tone: "peach" },
-  { icon: "✦", number: "03", title: "Level up", text: "Learn one position at a time. Small improvements add up to big wins.", href: "#analysis", action: "Start learning", tone: "blue" },
+  { icon: "♟", number: "03", title: "Engine Lab", text: "Play Stockfish 19, adjust engine strength, and explore positions in a dedicated chess workspace.", href: "/engine-lab", action: "Open Engine Lab", tone: "blue" },
 ]
 
 const pieces: Record<number, string> = {
@@ -100,7 +100,7 @@ export default function Home() {
 
             <div className="knightly-tools mt-16 grid gap-4 sm:grid-cols-3">
               {tools.map((tool, index) => (
-                <a key={tool.title} href={tool.href === "/play" ? `${basePath}/play` : tool.href} className={`knightly-tool-card knightly-tool-${tool.tone}`} style={{ animationDelay: `${index * 100}ms` }}>
+                <a key={tool.title} href={tool.href.startsWith("/") ? `${basePath}${tool.href}` : tool.href} className={`knightly-tool-card knightly-tool-${tool.tone}`} style={{ animationDelay: `${index * 100}ms` }}>
                   <div className="flex items-start justify-between">
                     <span className="knightly-tool-icon">{tool.icon}</span>
                     <span className="knightly-tool-number">{tool.number}</span>
