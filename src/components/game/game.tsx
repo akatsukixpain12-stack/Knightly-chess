@@ -160,13 +160,18 @@ export default function Game() {
             pushPageWarning(setErrors, "Andromeda engine unavailable", "The Andromeda worker files are not included in this build. Stockfish will be used for now.")
         }
 
-        if (!wasmThreadsSupported()) {
-            if (!wasmSupported()) {
-                pushPageWarning(setErrors, NOT_SUPPORTED_WASM_WARNING[0], NOT_SUPPORTED_WASM_WARNING[1])
-                engineWorkerRef.current = new window.Worker(`${basePath}/engine/stockfish-single.js`)
-            } else {
-                engineWorkerRef.current = new window.Worker(`${basePath}/engine/stockfish-single.js`)
+        if (!wasmSupported()) {
+            // The legacy asm fallback is empty in this repository. Fail clearly
+            // instead of starting an empty worker and leaving analysis hanging.
+            pushPageWarning(setErrors, NOT_SUPPORTED_WASM_WARNING[0], NOT_SUPPORTED_WASM_WARNING[1])
+            engineWorkerRef.current = null
+            return () => {
+                engineWorkerRef.current?.terminate()
             }
+        }
+
+        if (!wasmThreadsSupported()) {
+            engineWorkerRef.current = new window.Worker(`${basePath}/engine/stockfish-single.js`)
         } else {
             engineWorkerRef.current = new window.Worker(`${basePath}/engine/stockfish.js`)
         }
