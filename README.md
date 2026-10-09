@@ -1,10 +1,14 @@
-# Andromeda
+# Knightly Chess
 
 ![screenshot](images/screenshot.png)
 
-[**Andromeda**](/) is a free, open source chess analysis website with bundled Stockfish and Andromeda engines.
+[**Knightly Chess**](/) is a free, open-source chess platform for game analysis, online play, and engine-powered improvement.
 
 
+
+## Engine Lab
+
+Knightly includes an **Engine Lab** at `/engine-lab` powered by the Stockfish Chess Web GUI project. It provides a full chessboard, engine play, adjustable strength, position import, and analysis tools. The original GUI is retained under `stockfish-gui/` and licensed under AGPL-3.0; Stockfish remains under its own GPL license. The GitHub Pages workflow fetches the upstream Stockfish 19 WebAssembly and opening-book assets during deployment, then bundles the GUI into the static site.
 
 ## Self Hosting
 
