@@ -9,10 +9,17 @@ import PageErrors from "@/components/errors/pageErrors"
 import GameButtons from "@/components/menu/analysis/gameButtons"
 
 const tools = [
-  { icon: "♟", title: "Analyze a game", text: "Review positions, explore variations, and learn from every move.", href: "#analysis", action: "Open analysis" },
-  { icon: "⚔", title: "Play chess", text: "Jump into a game and put your ideas to the test.", href: "/play", action: "Play now" },
-  { icon: "✦", title: "Improve every day", text: "Use engine feedback to spot mistakes and find stronger plans.", href: "#analysis", action: "Start improving" },
+  { icon: "♟", number: "01", title: "Analyze a game", text: "Find the turning points, understand your mistakes, and discover stronger moves.", href: "#analysis", action: "Open analysis", tone: "mint" },
+  { icon: "⚔", number: "02", title: "Play chess", text: "Take your ideas to the board and put your skills into practice.", href: "/play", action: "Play a game", tone: "peach" },
+  { icon: "✦", number: "03", title: "Level up", text: "Learn one position at a time. Small improvements add up to big wins.", href: "#analysis", action: "Start learning", tone: "blue" },
 ]
+
+const pieces: Record<number, string> = {
+  0: "♜", 1: "♞", 2: "♝", 3: "♛", 4: "♚", 5: "♝", 6: "♞", 7: "♜",
+  8: "♟", 9: "♟", 10: "♟", 11: "♟", 12: "♟", 13: "♟", 14: "♟", 15: "♟",
+  48: "♙", 49: "♙", 50: "♙", 51: "♙", 52: "♙", 53: "♙", 54: "♙", 55: "♙",
+  56: "♖", 57: "♘", 58: "♗", 59: "♕", 60: "♔", 61: "♗", 62: "♘", 63: "♖",
+}
 
 export default function Home() {
   return (
@@ -23,91 +30,95 @@ export default function Home() {
           <Nav />
         </header>
 
-        <div className="w-full min-h-full overflow-x-hidden">
-          <section className="mx-auto w-full max-w-6xl px-4 pt-10 pb-8 sm:px-6 sm:pt-16 lg:px-8">
-            <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_.9fr]">
-              <div className="max-w-2xl">
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-xs font-bold tracking-wide text-[#b7d98b]">
-                  <span className="h-2 w-2 rounded-full bg-[#9bc765]" />
-                  YOUR NEXT MOVE STARTS HERE
+        <div className="knightly-home w-full min-h-full overflow-x-hidden">
+          <section className="knightly-hero mx-auto w-full max-w-6xl px-4 pt-10 pb-10 sm:px-6 sm:pt-16 lg:px-8">
+            <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_.95fr]">
+              <div className="knightly-copy max-w-2xl">
+                <div className="knightly-pill mb-5 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-extrabold tracking-wide">
+                  <span className="knightly-live-dot" />
+                  YOUR CHESS JOURNEY STARTS HERE
                 </div>
-                <h1 className="text-4xl font-black leading-[1.06] tracking-tight text-white sm:text-6xl">
-                  Play smarter.<br />
-                  <span className="text-[#a6ce72]">Become Knightly.</span>
+                <h1 className="knightly-title text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl xl:text-7xl">
+                  Make every move<br />
+                  <span>mean something.</span>
                 </h1>
-                <p className="mt-5 max-w-xl text-base leading-7 text-white/65 sm:text-lg">
-                  Play, analyze, and understand your chess. Explore positions with engine-powered analysis and turn every game into progress.
+                <p className="knightly-subtitle mt-5 max-w-xl text-base leading-7 sm:text-lg">
+                  A friendly space to play, analyze, and get better at chess. Learn at your own pace — your next breakthrough starts with one move.
                 </p>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <a href="#analysis" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#9bc765] px-5 py-3 text-sm font-extrabold text-[#17200f] shadow-lg shadow-black/20 transition hover:bg-[#b1dc7b]">
-                    Analyze a position <span className="ml-2" aria-hidden="true">↗</span>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <a href="#analysis" className="knightly-button knightly-button-primary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
+                    Explore the analysis <span className="ml-2" aria-hidden="true">↗</span>
                   </a>
-                  <a href="/play" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/[.04] px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10">
-                    Play chess <span className="ml-2" aria-hidden="true">♞</span>
+                  <a href="/play" className="knightly-button knightly-button-secondary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
+                    <span className="mr-2 text-lg" aria-hidden="true">♞</span> Play a game
                   </a>
                 </div>
-                <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-medium text-white/45">
-                  <span>✓ Browser-based analysis</span>
-                  <span>✓ Explore best moves</span>
-                  <span>✓ Built for desktop and mobile</span>
+                <div className="knightly-proof mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold">
+                  <span><b>✓</b> Free to explore</span>
+                  <span><b>✓</b> Engine-powered insights</span>
+                  <span><b>✓</b> Made for every level</span>
                 </div>
               </div>
 
-              <div className="relative mx-auto w-full max-w-md">
-                <div className="absolute -inset-4 rounded-[2rem] bg-[#9bc765]/10 blur-2xl" />
-                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#242522] p-3 shadow-2xl shadow-black/30 sm:p-4">
-                  <div className="mb-3 flex items-center justify-between px-1">
+              <div className="knightly-board-wrap relative mx-auto w-full max-w-[470px]">
+                <div className="knightly-orbit knightly-orbit-one" />
+                <div className="knightly-orbit knightly-orbit-two" />
+                <div className="knightly-board-card relative">
+                  <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-[.18em] text-white/40">Knightly board</p>
-                      <p className="mt-1 text-sm font-semibold text-white">Think beyond the obvious.</p>
+                      <p className="knightly-eyebrow text-xs font-extrabold uppercase tracking-[.16em]">Your practice board</p>
+                      <p className="knightly-board-heading mt-1 text-lg font-black">One move at a time.</p>
                     </div>
-                    <span className="rounded-lg bg-[#9bc765]/15 px-2.5 py-1.5 text-xs font-bold text-[#b7d98b]">ANALYZE</span>
+                    <span className="knightly-status rounded-full px-3 py-1.5 text-xs font-extrabold">READY TO PLAY <span aria-hidden="true">●</span></span>
                   </div>
-                  <div className="grid aspect-square grid-cols-8 overflow-hidden rounded-lg border border-white/10">
+                  <div className="knightly-chessboard grid aspect-square grid-cols-8 overflow-hidden rounded-2xl">
                     {Array.from({ length: 64 }, (_, i) => {
                       const row = Math.floor(i / 8)
                       const col = i % 8
-                      const pieces: Record<number, string> = {
-                        0: "♜", 1: "♞", 2: "♝", 3: "♛", 4: "♚", 5: "♝", 6: "♞", 7: "♜",
-                        8: "♟", 9: "♟", 10: "♟", 11: "♟", 12: "♟", 13: "♟", 14: "♟", 15: "♟",
-                        48: "♙", 49: "♙", 50: "♙", 51: "♙", 52: "♙", 53: "♙", 54: "♙", 55: "♙",
-                        56: "♖", 57: "♘", 58: "♗", 59: "♕", 60: "♔", 61: "♗", 62: "♘", 63: "♖",
-                      }
                       const light = (row + col) % 2 === 0
                       return (
-                        <div key={i} className={`flex aspect-square items-center justify-center ${light ? "bg-[#e8e8d5]" : "bg-[#779556]"} `}>
-                          {pieces[i] && <span className={`select-none text-[clamp(1rem,4.4vw,2.7rem)] leading-none ${row < 2 ? "text-[#292b27] drop-shadow-sm" : "text-[#fffdf1] drop-shadow-[0_1px_1px_rgba(0,0,0,.5)]"}`}>{pieces[i]}</span>}
+                        <div key={i} className={`knightly-square flex aspect-square items-center justify-center ${light ? "knightly-light" : "knightly-dark"} `}>
+                          {pieces[i] && <span className={`knightly-piece select-none leading-none ${row < 2 ? "knightly-black-piece" : "knightly-white-piece"}`}>{pieces[i]}</span>}
                         </div>
                       )
                     })}
                   </div>
-                  <div className="mt-3 flex items-center justify-between rounded-xl bg-black/20 px-3 py-2.5">
-                    <span className="text-xs text-white/55">Your next move matters</span>
-                    <span className="text-xs font-bold text-[#b7d98b]">KNIGHTLY ♞</span>
+                  <div className="knightly-board-footer mt-4 flex items-center justify-between gap-3 rounded-2xl px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <span className="knightly-avatar">♘</span>
+                      <div><p className="text-sm font-extrabold">Knightly Chess</p><p className="knightly-muted text-xs">Think. Try. Improve.</p></div>
+                    </div>
+                    <span className="knightly-footer-arrow" aria-hidden="true">↗</span>
                   </div>
                 </div>
+                <div className="knightly-float-chip knightly-float-top"><span>✦</span> Better moves, step by step</div>
+                <div className="knightly-float-chip knightly-float-bottom"><span>♟</span> Your next move matters</div>
               </div>
             </div>
 
-            <div className="mt-12 grid gap-3 sm:grid-cols-3">
-              {tools.map((tool) => (
-                <a key={tool.title} href={tool.href} className="group rounded-2xl border border-white/[.09] bg-white/[.035] p-5 transition hover:-translate-y-0.5 hover:border-[#9bc765]/40 hover:bg-white/[.06]">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9bc765]/15 text-xl text-[#b7d98b]">{tool.icon}</span>
-                  <h2 className="mt-4 text-base font-extrabold text-white">{tool.title}</h2>
-                  <p className="mt-2 min-h-12 text-sm leading-6 text-white/55">{tool.text}</p>
-                  <span className="mt-4 inline-block text-xs font-bold text-[#b7d98b]">{tool.action} →</span>
+            <div className="knightly-tools mt-16 grid gap-4 sm:grid-cols-3">
+              {tools.map((tool, index) => (
+                <a key={tool.title} href={tool.href} className={`knightly-tool-card knightly-tool-${tool.tone}`} style={{ animationDelay: `${index * 100}ms` }}>
+                  <div className="flex items-start justify-between">
+                    <span className="knightly-tool-icon">{tool.icon}</span>
+                    <span className="knightly-tool-number">{tool.number}</span>
+                  </div>
+                  <h2 className="mt-5 text-lg font-black">{tool.title}</h2>
+                  <p className="knightly-tool-text mt-2 text-sm leading-6">{tool.text}</p>
+                  <span className="knightly-tool-action mt-5 inline-flex items-center gap-2 text-sm font-extrabold">{tool.action} <span aria-hidden="true">↗</span></span>
                 </a>
               ))}
             </div>
           </section>
 
-          <section id="analysis" className="border-t border-white/[.08] bg-black/10 px-2 py-6 sm:px-4 sm:py-8">
-            <div className="mx-auto mb-5 flex max-w-6xl flex-wrap items-end justify-between gap-3 px-2">
+          <section id="analysis" className="knightly-analysis-section px-2 py-8 sm:px-4 sm:py-12">
+            <div className="mx-auto mb-7 flex max-w-6xl flex-wrap items-end justify-between gap-4 px-2">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[.2em] text-[#b7d98b]">The analysis studio</p>
-                <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">Make your next move your best.</h2>
-                <p className="mt-2 text-sm text-white/55">Play moves on the board, inspect the position, and explore engine suggestions.</p>
+                <p className="knightly-analysis-kicker text-xs font-extrabold uppercase tracking-[.2em]">THE ANALYSIS STUDIO</p>
+                <h2 className="knightly-analysis-title mt-2 text-2xl font-black sm:text-4xl">Curious about a position?</h2>
+                <p className="knightly-analysis-subtitle mt-2 max-w-2xl text-sm leading-6 sm:text-base">Move pieces on the board, explore different ideas, and use engine suggestions to understand why a move works.</p>
               </div>
+              <span className="knightly-analysis-badge rounded-full px-4 py-2 text-xs font-extrabold">YOUR SPACE TO LEARN ♟</span>
             </div>
             <main className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 overflow-x-hidden vertical:flex-row vertical:items-start vertical:justify-center vertical:gap-2">
               <AnalyzeContextProvider>
@@ -124,8 +135,8 @@ export default function Home() {
               </AnalyzeContextProvider>
             </main>
           </section>
-          <footer className="border-t border-white/[.08] px-4 py-6 text-center text-xs text-white/35">
-            Knightly · Play, review, analyze, improve.
+          <footer className="knightly-footer border-t px-4 py-7 text-center text-xs">
+            Knightly Chess <span aria-hidden="true">♞</span> · Play, review, analyze, improve.
           </footer>
         </div>
       </ErrorsContextProvider>
