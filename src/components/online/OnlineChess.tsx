@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Chess, Square } from "chess.js"
+import { wasmSupported, wasmThreadsSupported } from "@/engine/wasmChecks"
 import Link from "next/link"
 import { createRoom, ensureAuth, findWaitingRooms, getProfile, joinRoom, loadRoom, postChat, postMove, postResign, saveProfile, streamRoom, UserProfile, Room } from "@/lib/online"
 
@@ -164,8 +165,13 @@ export default function OnlineChess() {
 
   useEffect(() => {
     if (!engineMode) return
-    const base = process.env.NEXT_PUBLIC_BASE_PATH || ""
-    const worker = new Worker(`${base}/engine/stockfish.js`)
+    if (!wasmSupported()) {
+      setError("This browser does not support WebAssembly, so local engine play is unavailable.")
+      return
+    }
+    const base = process.env.NEXT_PUBLIC_BASE_PATH?.trim() || ""
+    const engineFile = wasmThreadsSupported() ? "stockfish.js" : "stockfish-single.js"
+    const worker = new Worker(`${base}/engine/${engineFile}`)
     engineWorkerRef.current = worker
     const handler = (event: MessageEvent) => {
       const line = String(event.data)
