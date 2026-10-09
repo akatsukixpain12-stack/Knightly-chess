@@ -10,7 +10,7 @@ import GameButtons from "@/components/menu/analysis/gameButtons"
 
 const tools = [
   { icon: "♟", number: "01", title: "Analyze a game", text: "Find the turning points, understand your mistakes, and discover stronger moves.", href: "#analysis", action: "Open analysis", tone: "mint" },
-  { icon: "⚔", number: "02", title: "Play chess", text: "Take your ideas to the board and put your skills into practice.", href: "/play", action: "Play a game", tone: "peach" },
+  { icon: "⚔", number: "02", title: "Play chess", text: "Take your ideas to the board and put your skills into practice.", href: `${basePath}/play`, action: "Play a game", tone: "peach" },
   { icon: "✦", number: "03", title: "Level up", text: "Learn one position at a time. Small improvements add up to big wins.", href: "#analysis", action: "Start learning", tone: "blue" },
 ]
 
@@ -22,6 +22,8 @@ const pieces: Record<number, string> = {
 }
 
 export default function Home() {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim() || ""
+
   return (
     <ConfigContextProvider>
       <ErrorsContextProvider>
@@ -49,7 +51,7 @@ export default function Home() {
                   <a href="#analysis" className="knightly-button knightly-button-primary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
                     Explore the analysis <span className="ml-2" aria-hidden="true">↗</span>
                   </a>
-                  <a href="/play" className="knightly-button knightly-button-secondary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
+                  <a href={`${basePath}/play`} className="knightly-button knightly-button-secondary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
                     <span className="mr-2 text-lg" aria-hidden="true">♞</span> Play a game
                   </a>
                 </div>
