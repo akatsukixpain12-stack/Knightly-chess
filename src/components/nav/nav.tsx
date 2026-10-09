@@ -71,11 +71,11 @@ export default function Nav() {
 
     return (
         <nav className="flex flex-col navTop:h-screen navTop:w-max w-screen relative">
-            <div className="navTop:pt-1 navTop:pb-6 navTop:h-full w-full overflow-y-auto bg-backgroundBox flex navTop:flex-col flex-row justify-between select-none navTop:items-start items-stretch">
-                <div ref={topLinksRef} className="flex navTop:flex-col flex-row">
+            <div ref={topLinksRef} className="navTop:pt-1 navTop:pb-6 navTop:h-full w-full overflow-y-auto bg-backgroundBox flex navTop:flex-col flex-row justify-between select-none navTop:items-start items-stretch">
+                <div className="flex navTop:flex-col flex-row">
                     <Link draggable={false} onMouseEnter={() => setOpenedMenu(null)} href="/" className="flex flex-row gap-1 font-extrabold text-xl navTop:p-3 p-1.5 transition-colors hover:bg-backgroundBoxHover hover:text-foregroundHighlighted">
-                        <Image draggable={false} height={30} width={30} alt="logo" src={`${process.env.NEXT_PUBLIC_BASE_PATH}/images/logo.svg`} className="navTop:mt-[-2px]" />
-                        <div className="h-fit w-fit reduceNav:block hidden">Andromeda</div>
+                        <Image draggable={false} height={30} width={30} alt="Knightly logo" src={`${process.env.NEXT_PUBLIC_BASE_PATH}/logo.png`} className="navTop:mt-[-2px] rounded-md object-contain" />
+                        <div className="h-fit w-fit reduceNav:block hidden">Knightly</div>
                     </Link>
                     <Link href="/play" className="text-lg outline-none font-bold navTop:px-3 navTop:py-2 p-1.5 hover:bg-backgroundBoxHover hover:text-foregroundHighlighted transition-colors flex flex-row gap-2">
                         <span className="text-2xl leading-none">♞</span>
@@ -93,7 +93,7 @@ export default function Nav() {
                 <div className="flex navTop:flex-col flex-row text-sm font-bold navTop:w-full navTop:h-fit">
                     {botLinks.map((link, i) => {
                         return (
-                            <Link draggable={false} key={i} target="_blank" href={link.href} className="flex flex-row gap-2 h-full navTop:h-fit reduceNav:px-3 reduceNav:justify-start justify-center items-center navTop:py-2 p-2 group hover:bg-backgroundBoxHover text-foregroundGrey hover:text-foregroundHighlighted transition-colors">
+                            <Link draggable={false} key={i} target="_blank" href={link.href} className="flex flex-row gap-2 h-full navTop:h-fit reduceNav:px-3 navTop:justify-start justify-center items-center navTop:py-2 p-2 group hover:bg-backgroundBoxHover text-foregroundGrey hover:text-foregroundHighlighted transition-colors">
                                 <link.icon className="fill-foregroundGrey transition-colors group-hover:fill-foregroundHighlighted" />
                                 <span className="reduceNav:block hidden">{link.label}</span>
                             </Link>
