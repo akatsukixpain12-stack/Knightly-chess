@@ -307,13 +307,13 @@ export default function OnlineChess() {
     } catch {}
   }
 
-  if (loading) return <main className="min-h-screen w-full flex items-center justify-center bg-background text-foreground font-bold">Loading Knightly...</main>
-  if (!profile) return <main className="min-h-screen w-full flex items-center justify-center bg-background p-4"><Onboarding onDone={saveOnboarding} /></main>
+  if (loading) return <main className="knightly-play-shell min-h-screen w-full flex items-center justify-center bg-background text-foreground font-bold">Loading Knightly...</main>
+  if (!profile) return <main className="knightly-play-shell min-h-screen w-full flex items-center justify-center bg-background p-4"><Onboarding onDone={saveOnboarding} /></main>
 
   const currentMessages = Object.values(room?.messages || {}).sort((a,b) => a.createdAt - b.createdAt)
 
   return (
-    <main className="min-h-screen w-full bg-background text-foreground p-3 md:p-6">
+    <main className="knightly-play-shell min-h-screen w-full bg-background text-foreground p-3 md:p-6">
       <div className="max-w-[1450px] mx-auto">
         <header className="flex items-center justify-between gap-3 mb-5">
           <div><Link href="/" className="font-black text-xl">♞ Knightly</Link><p className="text-sm text-foregroundGrey">Play • Review • Improve</p></div>
