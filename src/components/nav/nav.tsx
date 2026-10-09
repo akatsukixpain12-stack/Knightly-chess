@@ -12,6 +12,7 @@ export const DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=S8SWJ
 
 export default function Nav() {
     const configContext = useContext(ConfigContext)
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim() || ""
 
     const [openedMenu, setOpenedMenu] = configContext.openedMenu
     const boardMenuSettingsRef = configContext.boardMenuSettingsRef
@@ -29,7 +30,7 @@ export default function Nav() {
     }
 
     const topLinks: TopLink[] = [
-        { label: "Settings", hover: openSettings, icon: `${process.env.NEXT_PUBLIC_BASE_PATH}/images/setting.svg`, role: "button" },
+        { label: "Settings", hover: openSettings, icon: `${basePath}/images/setting.svg`, role: "button" },
     ]
 
     interface BotLinks {
@@ -74,7 +75,7 @@ export default function Nav() {
             <div ref={topLinksRef} className="navTop:pt-1 navTop:pb-6 navTop:h-full w-full overflow-y-auto bg-backgroundBox flex navTop:flex-col flex-row justify-between select-none navTop:items-start items-stretch">
                 <div className="flex navTop:flex-col flex-row">
                     <Link draggable={false} onMouseEnter={() => setOpenedMenu(null)} href="/" className="flex flex-row gap-1 font-extrabold text-xl navTop:p-3 p-1.5 transition-colors hover:bg-backgroundBoxHover hover:text-foregroundHighlighted">
-                        <Image draggable={false} height={30} width={30} alt="Knightly logo" src={`${process.env.NEXT_PUBLIC_BASE_PATH}/logo.png`} className="navTop:mt-[-2px] rounded-md object-contain" />
+                        <Image draggable={false} height={30} width={30} alt="Knightly logo" src={`${basePath}/logo.png`} className="navTop:mt-[-2px] rounded-md object-contain" />
                         <div className="h-fit w-fit reduceNav:block hidden">Knightly</div>
                     </Link>
                     <Link href="/play" className="text-lg outline-none font-bold navTop:px-3 navTop:py-2 p-1.5 hover:bg-backgroundBoxHover hover:text-foregroundHighlighted transition-colors flex flex-row gap-2">
