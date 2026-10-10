@@ -9,9 +9,9 @@ import PageErrors from "@/components/errors/pageErrors"
 import GameButtons from "@/components/menu/analysis/gameButtons"
 
 const tools = [
-  { icon: "♟", number: "01", title: "Analyze a game", text: "Find the turning points, understand your mistakes, and discover stronger moves.", href: "#analysis", action: "Open analysis", tone: "mint" },
-  { icon: "⚔", number: "02", title: "Play chess", text: "Take your ideas to the board and put your skills into practice.", href: "/play", action: "Play a game", tone: "peach" },
-  { icon: "♟", number: "03", title: "Engine Lab", text: "Play Stockfish 19, adjust engine strength, and explore positions in a dedicated chess workspace.", href: "/engine-lab", action: "Open Engine Lab", tone: "blue" },
+  { icon: "♟", number: "01", title: "Play against the computer", text: "Choose your level and build confidence against an engine that meets you where you are.", href: "#analysis", action: "Open analysis", tone: "mint" },
+  { icon: "⚔", number: "02", title: "Play live", text: "Get ready for real opponents. Find a match and put your chess skills to the test.", href: "/play", action: "Play a game", tone: "peach" },
+  { icon: "♟", number: "03", title: "Analysis board", text: "Explore positions, import games, and find stronger moves with engine-powered analysis.", href: "/engine-lab", action: "Open Engine Lab", tone: "blue" },
 ]
 
 const pieces: Record<number, string> = {
@@ -38,14 +38,14 @@ export default function Home() {
               <div className="knightly-copy max-w-2xl">
                 <div className="knightly-pill mb-5 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-extrabold tracking-wide">
                   <span className="knightly-live-dot" />
-                  FREE CHESS ANALYSIS · ENGINE POWERED
+                  FREE · NO SIGN-UP · JUST CHESS
                 </div>
                 <h1 className="knightly-title text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl xl:text-7xl">
-                  Find the moment<br />
-                  <span>your game changed.</span>
+                  Play chess free.<br />
+                  <span>Then actually break 2000.</span>
                 </h1>
                 <p className="knightly-subtitle mt-5 max-w-xl text-base leading-7 sm:text-lg">
-                  Review your games, spot the turning points, and see stronger moves with engine-powered analysis. No noise — just useful feedback to help you improve.
+                  Play against the computer, explore openings, and analyze your games with Knightly. Build your skills one move at a time — right in your browser.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <a href="#analysis" className="knightly-button knightly-button-primary inline-flex min-h-12 items-center justify-center rounded-2xl px-5 py-3 text-sm font-extrabold">
@@ -56,9 +56,9 @@ export default function Home() {
                   </a>
                 </div>
                 <div className="knightly-proof mt-8 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold">
-                  <span><b>✓</b> Free to explore</span>
-                  <span><b>✓</b> Engine-powered insights</span>
-                  <span><b>✓</b> Made for every level</span>
+                  <span><b>✓</b> No sign-up to explore</span>
+                  <span><b>✓</b> Powerful chess tools</span>
+                  <span><b>✓</b> Beginner to advanced</span>
                 </div>
               </div>
 
@@ -68,10 +68,10 @@ export default function Home() {
                 <div className="knightly-board-card relative">
                   <div className="mb-4 flex items-center justify-between gap-3">
                     <div>
-                      <p className="knightly-eyebrow text-xs font-extrabold uppercase tracking-[.16em]">Position preview</p>
-                      <p className="knightly-board-heading mt-1 text-lg font-black">Every move tells a story.</p>
+                      <p className="knightly-eyebrow text-xs font-extrabold uppercase tracking-[.16em]">YOUR NEXT MOVE</p>
+                      <p className="knightly-board-heading mt-1 text-lg font-black">Make every move count.</p>
                     </div>
-                    <span className="knightly-status rounded-full px-3 py-1.5 text-xs font-extrabold">READY TO PLAY <span aria-hidden="true">●</span></span>
+                    <span className="knightly-status rounded-full px-3 py-1.5 text-xs font-extrabold">BOARD READY <span aria-hidden="true">●</span></span>
                   </div>
                   <div className="knightly-chessboard grid aspect-square grid-cols-8 overflow-hidden rounded-2xl">
                     {Array.from({ length: 64 }, (_, i) => {
@@ -93,8 +93,8 @@ export default function Home() {
                     <span className="knightly-footer-arrow" aria-hidden="true">↗</span>
                   </div>
                 </div>
-                <div className="knightly-float-chip knightly-float-top"><span>✦</span> Find your turning point</div>
-                <div className="knightly-float-chip knightly-float-bottom"><span>♟</span> Learn from every game</div>
+                <div className="knightly-float-chip knightly-float-top"><span>✦</span> Play. Learn. Improve.</div>
+                <div className="knightly-float-chip knightly-float-bottom"><span>♟</span> Your chess journey starts here</div>
               </div>
             </div>
 
@@ -116,9 +116,9 @@ export default function Home() {
           <section id="analysis" className="knightly-analysis-section px-2 py-8 sm:px-4 sm:py-12">
             <div className="mx-auto mb-7 flex max-w-6xl flex-wrap items-end justify-between gap-4 px-2">
               <div>
-                <p className="knightly-analysis-kicker text-xs font-extrabold uppercase tracking-[.2em]">THE ANALYSIS STUDIO</p>
-                <h2 className="knightly-analysis-title mt-2 text-2xl font-black sm:text-4xl">Curious about a position?</h2>
-                <p className="knightly-analysis-subtitle mt-2 max-w-2xl text-sm leading-6 sm:text-base">Move pieces on the board, explore different ideas, and use engine suggestions to understand why a move works.</p>
+                <p className="knightly-analysis-kicker text-xs font-extrabold uppercase tracking-[.2em]">KNIGHTLY ANALYSIS BOARD</p>
+                <h2 className="knightly-analysis-title mt-2 text-2xl font-black sm:text-4xl">Explore any position.</h2>
+                <p className="knightly-analysis-subtitle mt-2 max-w-2xl text-sm leading-6 sm:text-base">Move pieces, test ideas, and use engine suggestions to understand the position. Your analysis workspace is ready below.</p>
               </div>
               <span className="knightly-analysis-badge rounded-full px-4 py-2 text-xs font-extrabold">YOUR SPACE TO LEARN ♟</span>
             </div>
