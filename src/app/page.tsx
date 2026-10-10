@@ -9,7 +9,7 @@ import PageErrors from "@/components/errors/pageErrors"
 import GameButtons from "@/components/menu/analysis/gameButtons"
 
 const tools = [
-  { icon: "♟", number: "01", title: "Play against the computer", text: "Choose your level and build confidence against an engine that meets you where you are.", href: "#analysis", action: "Open analysis", tone: "mint" },
+  { icon: "♟", number: "01", title: "Play against the computer", text: "Choose your level and build confidence against an engine that meets you where you are.", href: "/play", action: "Play the computer", tone: "mint" },
   { icon: "⚔", number: "02", title: "Play live", text: "Get ready for real opponents. Find a match and put your chess skills to the test.", href: "/play", action: "Play a game", tone: "peach" },
   { icon: "♟", number: "03", title: "Analysis board", text: "Explore positions, import games, and find stronger moves with engine-powered analysis.", href: "/engine-lab", action: "Open Engine Lab", tone: "blue" },
 ]
