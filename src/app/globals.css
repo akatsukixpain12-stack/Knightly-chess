@@ -315,3 +315,33 @@ body:has(.knightly-home) nav > div:nth-child(2) {
     letter-spacing: -.04em;
   }
 }
+
+/* BoltChess-inspired dark editorial theme for Knightly's homepage. */
+.knightly-home { --kn-night:#130d0e;--kn-ink:#f0e7df;--kn-muted:#b7a9a4;--kn-paper:#130d0e;--kn-green:#c94350;--kn-green-deep:#8f1727;background:radial-gradient(ellipse at 75% 8%,rgba(120,27,42,.18),transparent 36rem),#130d0e;color:#f0e7df; }
+.knightly-home .knightly-pill { background:#281619;border-color:#4c242b;color:#e9c9c6; }
+.knightly-live-dot { background:#d14a56;box-shadow:0 0 0 4px #d14a5622; }
+.knightly-title { color:#f4eae1; }.knightly-title span { color:#d9a49a; }
+.knightly-subtitle,.knightly-proof { color:#b7a9a4; }.knightly-proof b { color:#e15c65; }
+.knightly-button-primary { background:#a51e31;color:#fff4ed;box-shadow:0 7px 0 #641321,0 14px 26px #0005; }
+.knightly-button-primary:hover { background:#c22b40;box-shadow:0 9px 0 #641321,0 18px 30px #0006; }
+.knightly-button-secondary { background:#201719;color:#f1e7df;border-color:#503239;box-shadow:0 5px 0 #0b0708; }
+.knightly-button-secondary:hover { background:#2a1b1e;box-shadow:0 8px 0 #0b0708; }
+.knightly-board-card { background:#1b1214;border-color:#40252a;box-shadow:0 22px 65px #0008,0 4px 12px #0004; }
+.knightly-eyebrow,.knightly-muted { color:#b39f9a; }.knightly-board-heading { color:#f2e7df; }
+.knightly-status { background:#2a171a;color:#f0b9b5; }
+.knightly-chessboard { border-color:#211618;box-shadow:0 0 0 1px #503239,0 8px 24px #0006; }
+.knightly-light { background:#c9b5a2; }.knightly-dark { background:#684b43; }
+.knightly-black-piece { color:#251b1a;text-shadow:0 1px 1px #fff5; }.knightly-white-piece { color:#fff5e9;text-shadow:0 2px 2px #25100f99; }
+.knightly-board-footer { background:#25191b;color:#f1e5dd; }.knightly-avatar { background:#462126;color:#f0c3bc; }.knightly-footer-arrow { background:#482027;color:#f1c3bb; }
+.knightly-orbit-one { border-color:#81313b; }.knightly-orbit-two { background:#54252b; }
+.knightly-float-chip { background:#211719;border-color:#4b2a30;box-shadow:0 10px 30px #0008;color:#e5d5cd; }.knightly-float-chip span { color:#e06a70; }
+.knightly-tool-card { background:#1d1416;border-color:#40272c;box-shadow:0 5px 0 #0c0809,0 12px 28px #0003; }
+.knightly-tool-card:hover { box-shadow:0 9px 0 #32191d,0 24px 40px #0006;border-color:#70404a; }
+.knightly-tool-number { color:#9f8582; }.knightly-tool-mint .knightly-tool-icon { background:#3b2025;color:#f0b3ae; }.knightly-tool-peach .knightly-tool-icon { background:#3b2420;color:#efb49c; }.knightly-tool-blue .knightly-tool-icon { background:#29212a;color:#d7b9d7; }
+.knightly-tool-card h2 { color:#f1e5dc; }.knightly-tool-text { color:#b5a4a0; }.knightly-tool-action { color:#e5a39e; }
+.knightly-analysis-section { background:#0e090a;color:#f5eee8;border-top:1px solid #392126; }.knightly-analysis-kicker { color:#e3a19c; }.knightly-analysis-title { color:#fff1e8; }.knightly-analysis-subtitle { color:#b8a6a0; }.knightly-analysis-badge { background:#251619;color:#f0c0ba;border-color:#4a292f; }
+.knightly-footer { background:#100a0b;color:#9c8985;border-color:#382126; }.knightly-footer span { color:#e0a29c; }
+body:has(.knightly-home),body:has(.knightly-home)>header,body:has(.knightly-home) nav>div:first-child { background:#130d0e; }
+body:has(.knightly-home)>header { border-bottom-color:#392126; }
+body:has(.knightly-home) nav>div:first-child a:hover,body:has(.knightly-home) nav>div:first-child button:hover { background:#30191d;color:#f2c1bb; }
+@media(max-width:640px){.knightly-float-chip{background:#211719ee;}}
